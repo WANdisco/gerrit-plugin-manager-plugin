@@ -1,0 +1,19 @@
+<!DOCTYPE html>
+<html ng-app="PluginManager">
+<head>
+<meta charset="UTF-8">
+<title>Gerrit Plugin Manager</title>
+<script src= "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
+<script src="js/plugin-manager.js"></script>
+</head>
+<body>
+<div ng-controller="LoadInstalledPlugins as plugins">
+    <h1>Installed plugins</h1>
+    <ul>
+        <li ng-repeat="(key, prop) in plugins.list">
+            {{key}}
+        </li>
+    </ul>
+</div>
+</body>
+</html>
