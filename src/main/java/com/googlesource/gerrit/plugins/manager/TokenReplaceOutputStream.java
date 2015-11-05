@@ -30,9 +30,9 @@ public class TokenReplaceOutputStream extends ServletOutputStream {
 
   private final ByteArrayOutputStream outBuff;
 
-  private HttpServletResponse resp;
+  private final HttpServletResponse resp;
 
-  private int outLen;
+  private final int outLen;
 
   public TokenReplaceOutputStream(HttpServletResponse resp, int contentLength,
       byte[] token, byte[] replace) {
@@ -78,7 +78,6 @@ public class TokenReplaceOutputStream extends ServletOutputStream {
     ServletOutputStream out = resp.getOutputStream();
     out.write(convertedData.toByteArray());
     out.flush();
-
   }
 
   @Override

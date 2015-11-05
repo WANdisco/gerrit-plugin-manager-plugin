@@ -19,12 +19,18 @@ var app = angular.module('PluginManager', []).controller(
 
       plugins.list = {};
 
+      plugins.available = {};
+
       $http.get('/plugins/?all', plugins.httpConfig).then(
           function successCallback(response) {
             plugins.list = response.data;
           }, function errorCallback(response) {
-            // called asynchronously if an error occurs
-            // or server returns response with an error status.
+          });
+      
+      $http.get('/plugins/plugin-manager/available', plugins.httpConfig).then(
+          function successCallback(response) {
+            plugins.available = response.data;
+          }, function errorCallback(response) {
           });
     });
 

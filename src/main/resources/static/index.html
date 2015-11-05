@@ -11,7 +11,13 @@
     <h1>Installed plugins</h1>
     <ul>
         <li ng-repeat="(key, prop) in plugins.list">
-            {{key}}
+            {{key}} - {{prop.version}}
+        </li>
+    </ul>
+    <h1>Available plugins</h1>
+    <ul>
+        <li ng-repeat="(key, prop) in plugins.available">
+            {{key}} - {{prop.version}}
         </li>
     </ul>
 </div>

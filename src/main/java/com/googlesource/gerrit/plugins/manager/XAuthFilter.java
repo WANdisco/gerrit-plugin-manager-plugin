@@ -59,14 +59,14 @@ public class XAuthFilter implements Filter {
 
     final String gerritAuth = webSession.get().getXGerritAuth();
     if (gerritAuth != null) {
-      log.info("Injecting X-Gerrit-Auth for {}", httpReq.getRequestURI());
+      log.debug("Injecting X-Gerrit-Auth for {}", httpReq.getRequestURI());
       httpResp = new HttpServletResponseWrapper(httpResp) {
 
         private int origContentLength;
 
         @Override
         public void setHeader(String name, String value) {
-          log.info("{}: {}", name, value);
+          log.debug("{}: {}", name, value);
           if (name.equalsIgnoreCase("Content-Length")) {
             origContentLength = Integer.parseInt(value);
           } else {

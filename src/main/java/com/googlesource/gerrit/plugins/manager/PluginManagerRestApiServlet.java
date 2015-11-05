@@ -11,22 +11,22 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package com.googlesource.gerrit.plugins.manager;
 
-import com.google.inject.servlet.ServletModule;
+import com.google.gerrit.httpd.restapi.RestApiServlet;
+import com.google.inject.Inject;
+import com.google.inject.Singleton;
+import com.google.inject.util.Providers;
 
-import com.googlesource.gerrit.plugins.manager.repository.JenkinsCiPluginsRepository;
-import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
+@Singleton
+public class PluginManagerRestApiServlet extends RestApiServlet {
+  private static final long serialVersionUID = 1L;
 
-public class WebModule extends ServletModule {
-
-  @Override
-  protected void configureServlets() {
-    bind(AvailablePluginsCollection.class);
-    bind(PluginsRepository.class).to(JenkinsCiPluginsRepository.class);
-
-    serve("/available*").with(PluginManagerRestApiServlet.class);
-
-    filterRegex(".*\\.js").through(XAuthFilter.class);
+  @Inject
+  PluginManagerRestApiServlet(
+      Globals globals,
+      AvailablePluginsCollection members) {
+    super(globals, Providers.of(members));
   }
 }
