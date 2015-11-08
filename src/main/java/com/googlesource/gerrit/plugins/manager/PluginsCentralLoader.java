@@ -23,17 +23,19 @@ import com.googlesource.gerrit.plugins.manager.PluginsCentralLoader.ListKey;
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
 import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
 
-import java.util.List;
+import java.util.Collection;
 
 @Singleton
 public class PluginsCentralLoader extends
-    CacheLoader<ListKey, List<PluginInfo>> {
+    CacheLoader<ListKey, Collection<PluginInfo>> {
 
   public static class ListKey {
     static final ListKey ALL = new ListKey();
 
     private ListKey() {}
   }
+
+  private static final String GERRIT_VERSION = Version.getVersion();
 
   private final PluginsRepository repository;
 
@@ -43,7 +45,7 @@ public class PluginsCentralLoader extends
   }
 
   @Override
-  public List<PluginInfo> load(ListKey all) throws Exception {
-    return repository.list(Version.getVersion());
+  public Collection<PluginInfo> load(ListKey all) throws Exception {
+    return repository.list(GERRIT_VERSION);
   }
 }

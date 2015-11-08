@@ -30,8 +30,11 @@ import com.googlesource.gerrit.plugins.manager.gson.SmartJson;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -133,10 +136,34 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
       return Optional.absent();
     }
 
-    SmartJson artifactJson = SmartJson.of(artifacts.get(0));
-    String pluginFileName = artifactJson.getString("fileName");
+    Optional<SmartJson> artifactJson = findArtifact(artifacts, ".jar");
+    if (!artifactJson.isPresent()) {
+      return Optional.absent();
+    }
+
+    String pluginPath = artifactJson.get().getString("relativePath");
+
+    String[] pluginPathParts = pluginPath.split("/");
+    String pluginName = pluginPathParts[pluginPathParts.length-2];
+    String pluginUrl =
+        String.format("%s/artifact/%s", buildExecution.getString("url"),
+            pluginPath);
 
     String pluginVersion = "";
+    Optional<SmartJson> verArtifactJson =
+        findArtifact(artifacts, ".jar-version");
+    if (verArtifactJson.isPresent()) {
+      String versionUrl =
+          String.format("%s/artifact/%s", buildExecution.getString("url"),
+              verArtifactJson.get().getString("relativePath"));
+      try (BufferedReader reader =
+          new BufferedReader(new InputStreamReader(
+              new URL(versionUrl).openStream()), 4096)) {
+        pluginVersion = reader.readLine();
+      }
+    }
+
+    String sha1 = "";
     for (JsonElement elem : buildExecution.get("actions").get()
         .getAsJsonArray()) {
       SmartJson elemJson = SmartJson.of(elem);
@@ -144,10 +171,22 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
           elemJson.getOptional("lastBuiltRevision");
 
       if (lastBuildRevision.isPresent()) {
-        pluginVersion = lastBuildRevision.get().getString("SHA1");
+        sha1 = lastBuildRevision.get().getString("SHA1").substring(0, 8);
       }
     }
 
-    return Optional.of(new PluginInfo(pluginFileName, pluginVersion));
+    return Optional.of(new PluginInfo(pluginName, pluginVersion, sha1,
+        pluginUrl));
+  }
+
+  private Optional<SmartJson> findArtifact(JsonArray artifacts, String string) {
+    for (int i = 0; i < artifacts.size(); i++) {
+      SmartJson artifact = SmartJson.of(artifacts.get(i));
+      if (artifact.getString("relativePath").endsWith(string)) {
+        return Optional.of(artifact);
+      }
+    }
+
+    return Optional.absent();
   }
 }

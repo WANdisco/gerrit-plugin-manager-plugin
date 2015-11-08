@@ -27,6 +27,7 @@ import com.google.inject.Inject;
 
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -52,7 +53,7 @@ public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
     Map<String, PluginInfo> output = Maps.newTreeMap();
     List<PluginInfo> plugins;
     try {
-      plugins = pluginsCache.availablePlugins();
+      plugins = new ArrayList<>(pluginsCache.availablePlugins());
     } catch (ExecutionException e) {
       throw new RestApiException(
           "Unable to load the list of available plugins", e);

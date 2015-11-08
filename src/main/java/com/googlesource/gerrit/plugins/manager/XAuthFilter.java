@@ -16,6 +16,7 @@ package com.googlesource.gerrit.plugins.manager;
 
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.httpd.WebSession;
+import com.google.gerrit.server.AccessPath;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
@@ -57,8 +58,11 @@ public class XAuthFilter implements Filter {
     HttpServletRequest httpReq = (HttpServletRequest) req;
     HttpServletResponse httpResp = (HttpServletResponse) resp;
 
-    final String gerritAuth = webSession.get().getXGerritAuth();
+    WebSession session = webSession.get();
+    final String gerritAuth = session.getXGerritAuth();
     if (gerritAuth != null) {
+      session.setAccessPathOk(AccessPath.REST_API, true);
+
       log.debug("Injecting X-Gerrit-Auth for {}", httpReq.getRequestURI());
       httpResp = new HttpServletResponseWrapper(httpResp) {
 
@@ -86,9 +90,16 @@ public class XAuthFilter implements Filter {
               "@X-Gerrit-Auth".getBytes(), gerritAuth.getBytes());
         }
       };
-    }
 
-    chain.doFilter(req, httpResp);
+      httpResp.setHeader("Cache-Control", "private, no-cache, no-store, must-revalidate, max-age=0");
+      httpResp.setHeader("Pragma", "no-cache");
+      httpResp.setHeader("Expires", "0");
+
+      chain.doFilter(req, httpResp);
+    } else {
+      HttpServletResponse res = (HttpServletResponse) resp;
+      res.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+    }
   }
 
   @Override

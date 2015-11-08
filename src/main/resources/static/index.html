@@ -5,21 +5,77 @@
 <title>Gerrit Plugin Manager</title>
 <script src= "https://ajax.googleapis.com/ajax/libs/angularjs/1.4.7/angular.min.js"></script>
 <script src="js/plugin-manager.js"></script>
+<script src="https://code.jquery.com/jquery-2.1.4.min.js"></script>
+<link
+  href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.5/css/bootstrap.min.css"
+  rel="stylesheet"
+  integrity="sha256-MfvZlkHCEqatNoGiOXveE8FIwMzZg4W85qfrfIFBfYc= sha512-dTfge/zgoMYpP7QbHy4gWMEGsbsdZeCXz7irItjcC3sPUFtf0kuFbDz/ixG7ArTxmDjLXDmezHubeNikyKGVyQ=="
+  crossorigin="anonymous">
+<link href="css/style.css" rel="stylesheet">
 </head>
-<body>
-<div ng-controller="LoadInstalledPlugins as plugins">
-    <h1>Installed plugins</h1>
-    <ul>
-        <li ng-repeat="(key, prop) in plugins.list">
-            {{key}} - {{prop.version}}
-        </li>
-    </ul>
-    <h1>Available plugins</h1>
-    <ul>
-        <li ng-repeat="(key, prop) in plugins.available">
-            {{key}} - {{prop.version}}
-        </li>
-    </ul>
-</div>
+
+<body role="document">
+  <nav class="navbar navbar-inverse navbar-fixed-top">
+    <div class="container">
+      <div class="navbar-header">
+        <a class="navbar-brand" href="#">Gerrit Plugin Manager</a>
+      </div>
+    </div>
+  </nav>
+  <div class="container main" role="main"
+    ng-controller="LoadInstalledPlugins as plugins">
+    <div class="col-md-6">
+      <h2>Loaded</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Plugin Name</th>
+            <th>Version</th>
+            <th>Actions</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="(key, prop) in plugins.list">
+            <td>{{key}}</td>
+            <td>{{prop.version}}</td>
+            <td></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+    <div class="col-md-6">
+      <h2>Available</h2>
+      <table class="table table-striped">
+        <thead>
+          <tr>
+            <th>Plugin Name</th>
+            <th>Version</th>
+            <th>SHA1</th>
+            <th>Install</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr id="{{key}}-{{prop.version}}"
+            ng-repeat="(key, prop) in plugins.available">
+            <td>{{key}}</td>
+            <td>{{prop.version}}</td>
+            <td>{{prop.sha1}}</td>
+            <td>
+              <h5>
+                <span id="installing-{{key}}"
+                  class="label label-default hidden">Installing</span> <span
+                  id="installed-{{key}}"
+                  class="label label-success hidden">Installed</span> <span
+                  id="failed-{{key}}" class="label label-warning hidden">Failed</span>
+                <button id="{{key}}" type="button"
+                  class="btn btn-xs btn-primary"
+                  ng-click="install(prop.id,prop.url)">Install</button>
+              </h5>
+            </td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
 </body>
 </html>

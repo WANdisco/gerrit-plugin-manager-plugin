@@ -15,6 +15,8 @@
 package com.googlesource.gerrit.plugins.manager;
 
 import com.google.gerrit.extensions.events.LifecycleListener;
+import com.google.gerrit.extensions.registration.DynamicSet;
+import com.google.gerrit.extensions.webui.TopMenu;
 import com.google.inject.AbstractModule;
 import com.google.inject.internal.UniqueAnnotations;
 
@@ -25,6 +27,8 @@ public class Module extends AbstractModule {
 
   @Override
   protected void configure() {
+    DynamicSet.bind(binder(), TopMenu.class).to(PluginManagerTopMenu.class);
+
     bind(PluginsRepository.class).to(JenkinsCiPluginsRepository.class);
 
     install(PluginsCentralCache.module());
