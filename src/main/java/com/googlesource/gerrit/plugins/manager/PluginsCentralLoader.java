@@ -14,18 +14,26 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
+import com.google.common.cache.CacheLoader;
 import com.google.gerrit.common.Version;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
 
+import com.googlesource.gerrit.plugins.manager.PluginsCentralLoader.ListKey;
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
 import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
 
-import java.io.IOException;
 import java.util.List;
 
 @Singleton
-public class PluginsCentralLoader {
+public class PluginsCentralLoader extends
+    CacheLoader<ListKey, List<PluginInfo>> {
+
+  public static class ListKey {
+    static final ListKey ALL = new ListKey();
+
+    private ListKey() {}
+  }
 
   private final PluginsRepository repository;
 
@@ -34,7 +42,8 @@ public class PluginsCentralLoader {
     this.repository = repository;
   }
 
-  public List<PluginInfo> availablePlugins() throws IOException {
+  @Override
+  public List<PluginInfo> load(ListKey all) throws Exception {
     return repository.list(Version.getVersion());
   }
 }

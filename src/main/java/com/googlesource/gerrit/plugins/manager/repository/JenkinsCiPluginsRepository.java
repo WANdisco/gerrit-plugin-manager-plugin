@@ -16,9 +16,6 @@ package com.googlesource.gerrit.plugins.manager.repository;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.gerrit.extensions.annotations.PluginName;
-import com.google.gerrit.server.config.PluginConfig;
-import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
@@ -26,6 +23,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import com.googlesource.gerrit.plugins.manager.GerritVersionBranch;
+import com.googlesource.gerrit.plugins.manager.PluginManagerConfig;
 import com.googlesource.gerrit.plugins.manager.gson.SmartGson;
 import com.googlesource.gerrit.plugins.manager.gson.SmartJson;
 
@@ -35,6 +33,7 @@ import org.slf4j.LoggerFactory;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 @Singleton
@@ -43,12 +42,11 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
   private static final Logger log = LoggerFactory
       .getLogger(JenkinsCiPluginsRepository.class);
 
-  private static final String DEFAULT_GERRIT_CI_URL =
-      "https://gerrit-ci.gerritforge.com";
-
   private static final Optional<PluginInfo> noPluginInfo = Optional.absent();
 
-  private final PluginConfig config;
+  private final PluginManagerConfig config;
+
+  private HashMap<String, List<PluginInfo>> cache = new HashMap<>();
 
   static class View {
     String name;
@@ -65,20 +63,29 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
 
   @Inject
   public JenkinsCiPluginsRepository(Provider<SmartGson> gsonProvider,
-      PluginConfigFactory configFactory, @PluginName String pluginName) {
+      PluginManagerConfig config) {
     this.gsonProvider = gsonProvider;
-    this.config = configFactory.getFromGerritConfig(pluginName);
+    this.config = config;
   }
 
   @Override
   public List<PluginInfo> list(String gerritVersion) throws IOException {
+    List<PluginInfo> list = cache.get(gerritVersion);
+    if(list == null) {
+      list = getList(gerritVersion);
+      cache.put(gerritVersion, list);
+    }
+    return list;
+  }
+
+  private List<PluginInfo> getList(String gerritVersion) throws IOException {
     SmartGson gson = gsonProvider.get();
     String viewName = "Plugins-" + GerritVersionBranch.getBranch(gerritVersion);
     List<PluginInfo> plugins = new ArrayList<>();
 
     try {
       Job[] jobs =
-          gson.get(getJenkinsUrl() + "/view/" + viewName + "/api/json",
+          gson.get(config.getJenkinsUrl() + "/view/" + viewName + "/api/json",
               View.class).jobs;
 
       for (Job job : jobs) {
@@ -94,10 +101,6 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
     }
 
     return plugins;
-  }
-
-  private String getJenkinsUrl() {
-    return config.getString("jenkinsUrl", DEFAULT_GERRIT_CI_URL);
   }
 
   private Optional<PluginInfo> getPluginInfo(final SmartGson gson, String url)

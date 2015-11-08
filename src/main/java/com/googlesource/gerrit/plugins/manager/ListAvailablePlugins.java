@@ -27,20 +27,20 @@ import com.google.inject.Inject;
 
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
 
-import java.io.IOException;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ExecutionException;
 
 /** List plugins available for installation. */
 @RequiresCapability(GlobalCapability.VIEW_PLUGINS)
 public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
-  private final PluginsCentralLoader loader;
+  private final PluginsCentralCache pluginsCache;
 
   @Inject
-  public ListAvailablePlugins(PluginsCentralLoader loader) {
-    this.loader = loader;
+  public ListAvailablePlugins(PluginsCentralCache pluginsCache) {
+    this.pluginsCache = pluginsCache;
   }
 
   @Override
@@ -52,8 +52,8 @@ public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
     Map<String, PluginInfo> output = Maps.newTreeMap();
     List<PluginInfo> plugins;
     try {
-      plugins = loader.availablePlugins();
-    } catch (IOException e) {
+      plugins = pluginsCache.availablePlugins();
+    } catch (ExecutionException e) {
       throw new RestApiException(
           "Unable to load the list of available plugins", e);
     }

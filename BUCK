@@ -8,6 +8,7 @@ gerrit_plugin(
     'Gerrit-PluginName: plugin-manager',
     'Gerrit-ApiType: plugin',
     'Gerrit-HttpModule: com.googlesource.gerrit.plugins.manager.WebModule',
+    'Gerrit-Module: com.googlesource.gerrit.plugins.manager.Module',
     'Implementation-Title: Plugin manager',
     'Implementation-URL: https://gerrit-review.googlesource.com/#/admin/projects/plugins/plugin-manager',
   ],

@@ -11,18 +11,26 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
+
 package com.googlesource.gerrit.plugins.manager;
 
-import com.google.inject.servlet.ServletModule;
+import com.google.gerrit.extensions.events.LifecycleListener;
+import com.google.inject.AbstractModule;
+import com.google.inject.internal.UniqueAnnotations;
 
-public class WebModule extends ServletModule {
+import com.googlesource.gerrit.plugins.manager.repository.JenkinsCiPluginsRepository;
+import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
+
+public class Module extends AbstractModule {
 
   @Override
-  protected void configureServlets() {
-    bind(AvailablePluginsCollection.class);
+  protected void configure() {
+    bind(PluginsRepository.class).to(JenkinsCiPluginsRepository.class);
 
-    serve("/available*").with(PluginManagerRestApiServlet.class);
+    install(PluginsCentralCache.module());
 
-    filterRegex(".*\\.js").through(XAuthFilter.class);
+    bind(LifecycleListener.class).annotatedWith(UniqueAnnotations.create()).to(
+        OnStartStop.class);
+
   }
 }
