@@ -13,6 +13,8 @@
 // limitations under the License.
 package com.googlesource.gerrit.plugins.manager;
 
+import com.google.gerrit.extensions.registration.DynamicSet;
+import com.google.gerrit.httpd.WebLoginListener;
 import com.google.inject.servlet.ServletModule;
 
 public class WebModule extends ServletModule {
@@ -20,6 +22,8 @@ public class WebModule extends ServletModule {
   @Override
   protected void configureServlets() {
     bind(AvailablePluginsCollection.class);
+    DynamicSet.bind(binder(), WebLoginListener.class)
+      .to(FirstWebLoginListener.class);
 
     serve("/available*").with(PluginManagerRestApiServlet.class);
 
