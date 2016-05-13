@@ -19,3 +19,16 @@ td {
 .main {
   margin-top: 51px;
 }
+
+button.btn-xs {
+  width: 65px;
+}
+
+.label-success {
+  background-color: #888888;
+}
+
+div.top-header {
+  padding-left: 35px;
+  padding-right: 35px;
+}
