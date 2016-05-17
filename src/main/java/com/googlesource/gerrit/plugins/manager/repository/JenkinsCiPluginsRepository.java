@@ -16,6 +16,7 @@ package com.googlesource.gerrit.plugins.manager.repository;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
+import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
@@ -27,6 +28,7 @@ import com.googlesource.gerrit.plugins.manager.PluginManagerConfig;
 import com.googlesource.gerrit.plugins.manager.gson.SmartGson;
 import com.googlesource.gerrit.plugins.manager.gson.SmartJson;
 
+import org.apache.commons.lang.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -144,7 +146,11 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
     String pluginPath = artifactJson.get().getString("relativePath");
 
     String[] pluginPathParts = pluginPath.split("/");
-    String pluginName = pluginPathParts[pluginPathParts.length-2];
+    String pluginName =
+        isMavenBuild(pluginPathParts)
+            ? fixPluginNameForMavenBuilds(pluginPathParts)
+            : pluginPathParts[pluginPathParts.length - 2];
+
     String pluginUrl =
         String.format("%s/artifact/%s", buildExecution.getString("url"),
             pluginPath);
@@ -177,6 +183,19 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
 
     return Optional.of(new PluginInfo(pluginName, pluginVersion, sha1,
         pluginUrl));
+  }
+
+  private String fixPluginNameForMavenBuilds(String[] pluginPathParts) {
+    String mavenPluginFilename =
+        StringUtils.substringBeforeLast(
+            pluginPathParts[pluginPathParts.length - 1], ".");
+    int versionDelim = mavenPluginFilename.indexOf('-');
+    return versionDelim > 0 ? mavenPluginFilename
+        .substring(0, versionDelim) : mavenPluginFilename;
+  }
+
+  private boolean isMavenBuild(String[] pluginPathParts) {
+    return pluginPathParts[pluginPathParts.length - 2].equals("target");
   }
 
   private Optional<SmartJson> findArtifact(JsonArray artifacts, String string) {
