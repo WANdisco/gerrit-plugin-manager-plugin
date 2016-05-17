@@ -29,7 +29,8 @@ public class Module extends AbstractModule {
   protected void configure() {
     DynamicSet.bind(binder(), TopMenu.class).to(PluginManagerTopMenu.class);
 
-    bind(PluginsRepository.class).to(JenkinsCiPluginsRepository.class);
+    DynamicSet.setOf(binder(), PluginsRepository.class);
+    DynamicSet.bind(binder(), PluginsRepository.class).to(JenkinsCiPluginsRepository.class);
 
     install(PluginsCentralCache.module());
 

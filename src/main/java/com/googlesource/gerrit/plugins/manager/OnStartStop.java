@@ -14,33 +14,31 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
-import com.google.gerrit.common.Version;
 import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.events.LifecycleListener;
 import com.google.inject.Inject;
 
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
-import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
 import java.util.Collection;
+import java.util.concurrent.ExecutionException;
 
 public class OnStartStop implements LifecycleListener {
   private static final Logger log = LoggerFactory.getLogger(OnStartStop.class);
 
-  private final PluginsRepository pluginsRepo;
+  private final PluginsCentralCache pluginsCache;
 
   private final String pluginName;
 
   private final PluginManagerConfig config;
 
   @Inject
-  public OnStartStop(PluginsRepository pluginsRepo,
+  public OnStartStop(PluginsCentralCache pluginsCache,
       @PluginName String pluginName, PluginManagerConfig config) {
-    this.pluginsRepo = pluginsRepo;
+    this.pluginsCache = pluginsCache;
     this.pluginName = pluginName;
     this.config = config;
   }
@@ -54,10 +52,9 @@ public class OnStartStop implements LifecycleListener {
         public void run() {
           log.info("Start-up: pre-loading list of plugins from registry");
           try {
-            Collection<PluginInfo> plugins =
-                pluginsRepo.list(Version.getVersion());
+            Collection<PluginInfo> plugins = pluginsCache.availablePlugins();
             log.info("{} plugins successfully pre-loaded", plugins.size());
-          } catch (IOException e) {
+          } catch (ExecutionException e) {
             log.error("Cannot access plugins list at this time", e);
           }
         }
