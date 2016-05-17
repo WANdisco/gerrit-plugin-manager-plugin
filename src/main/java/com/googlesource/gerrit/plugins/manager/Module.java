@@ -20,6 +20,7 @@ import com.google.gerrit.extensions.webui.TopMenu;
 import com.google.inject.AbstractModule;
 import com.google.inject.internal.UniqueAnnotations;
 
+import com.googlesource.gerrit.plugins.manager.repository.CorePluginsRepository;
 import com.googlesource.gerrit.plugins.manager.repository.JenkinsCiPluginsRepository;
 import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
 
@@ -31,6 +32,7 @@ public class Module extends AbstractModule {
 
     DynamicSet.setOf(binder(), PluginsRepository.class);
     DynamicSet.bind(binder(), PluginsRepository.class).to(JenkinsCiPluginsRepository.class);
+    DynamicSet.bind(binder(), PluginsRepository.class).to(CorePluginsRepository.class);
 
     install(PluginsCentralCache.module());
 
