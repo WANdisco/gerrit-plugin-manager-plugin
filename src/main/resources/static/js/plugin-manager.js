@@ -17,22 +17,49 @@ var app = angular.module('PluginManager', []).controller(
     function($scope, $http) {
       var plugins = this;
 
-      plugins.list = {};
+      plugins.list = [];
 
       plugins.available = {};
+
+      $scope.searchPlugin = '';
+
+      $scope.pluginIndexOf = function(pluginId) {
+        var pluginIndex = -1
+
+        angular.forEach(plugins.list, function(row, rowIndex) {
+          if (row.id == pluginId) {
+            pluginIndex = rowIndex
+          }
+        });
+
+        return pluginIndex;
+      }
 
       $scope.refreshInstalled = function() {
         $http.get('/plugins/?all', plugins.httpConfig).then(
             function successCallback(response) {
 
               angular.forEach(response.data, function(plugin) {
-                plugins.list[plugin.id] = {
-                    id: plugin.id,
-                    index_url: plugin.index_url,
-                    version: plugin.version,
-                    sha1: '',
-                    url: plugin.url,
-                    update_version: ''
+                var currPluginIdx = $scope.pluginIndexOf(plugin.id);
+
+                if (currPluginIdx < 0) {
+                  plugins.list.push({
+                    id : plugin.id,
+                    index_url : plugin.index_url,
+                    version : plugin.version,
+                    sha1 : '',
+                    url : plugin.url,
+                    update_version : ''
+                  });
+                } else {
+                  plugins.list[currPluginIdx] = {
+                    id : plugin.id,
+                    index_url : plugin.index_url,
+                    version : plugin.version,
+                    sha1 : '',
+                    url : plugin.url,
+                    update_version : ''
+                  }
                 }
               });
 
@@ -43,34 +70,43 @@ var app = angular.module('PluginManager', []).controller(
 
       $scope.refreshAvailable = function() {
         $http.get('/plugins/plugin-manager/available', plugins.httpConfig)
-            .then(function successCallback(response) {
+            .then(
+                function successCallback(response) {
 
-              angular.forEach(response.data, function(plugin) {
-                var currPlugin = plugins.list[plugin.id];
+                  angular.forEach(response.data, function(plugin) {
+                    var currRow = $scope.pluginIndexOf(plugin.id);
+                    var currPlugin = currRow < 0 ? undefined
+                        : plugins.list[currRow];
 
-                if(currPlugin === undefined) {
-                  currPlugin = {
-                      id: plugin.id,
-                      index_url: '',
-                      version: ''
-                  }
-                }
+                    if (currPlugin === undefined) {
+                      currPlugin = {
+                        id : plugin.id,
+                        index_url : '',
+                        version : ''
+                      }
+                    }
 
-                if(plugin.version != currPlugin.version) {
-                  currPlugin.update_version = plugin.version;
-                }
-                currPlugin.sha1 = plugin.sha1;
-                currPlugin.url = plugin.url;
+                    if (plugin.version != currPlugin.version) {
+                      currPlugin.update_version = plugin.version;
+                    }
+                    currPlugin.sha1 = plugin.sha1;
+                    currPlugin.url = plugin.url;
 
-                plugins.list[plugin.id] = currPlugin;
-              });
-              plugins.available = response.data;
-            }, function errorCallback(response) {
-            });
+                    if (currRow < 0) {
+                      plugins.list.push(currPlugin);
+                    } else {
+                      plugins.list[currRow] = currPlugin;
+                    }
+                  });
+                  plugins.available = response.data;
+                }, function errorCallback(response) {
+                });
       }
 
       $scope.install = function(id, url) {
-        var pluginInstallData = { "url" : url };
+        var pluginInstallData = {
+          "url" : url
+        };
         $("button#" + id).addClass("hidden");
         $("span#installing-" + id).removeClass("hidden");
         $http.put('/a/plugins/' + id + ".jar", pluginInstallData).then(

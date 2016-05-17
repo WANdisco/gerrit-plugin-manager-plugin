@@ -14,21 +14,25 @@
 <link href="css/style.css" rel="stylesheet">
 </head>
 
-<body role="document">
+<body role="document" ng-controller="LoadInstalledPlugins as plugins">
   <nav class="navbar navbar-inverse navbar-fixed-top">
     <div class="container top-header">
       <div class="navbar-header">
         <a class="navbar-brand">Gerrit Plugins</a>
       </div>
       <div class="navbar-collapse collapse">
+        <form class="navbar-form navbar-left" role="search">
+          <div class="form-group">
+            <input type="text" class="form-control searchbox" placeholder="Search" ng-model="searchPlugin">
+          </div>
+        </form>
         <ul class="nav navbar-nav navbar-right">
           <li><a href="/">&gt; Go to Gerrit</a></li>
         </ul>
       </div>
     </div>
   </nav>
-  <div class="container main" role="main"
-    ng-controller="LoadInstalledPlugins as plugins">
+  <div class="container main" role="main">
     <div class="col-md-12">
       <table class="table table-striped">
         <thead>
@@ -41,24 +45,24 @@
           </tr>
         </thead>
         <tbody>
-          <tr ng-repeat="(key, prop) in plugins.list">
-            <td>{{key}}</td>
+          <tr ng-repeat="prop in plugins.list | filter:searchPlugin">
+            <td>{{prop.id}}</td>
             <td>{{prop.version}}</td>
             <td>{{prop.update_version}}</td>
             <td>{{prop.sha1}}</td>
             <td>
               <h5>
-                <span id="installing-{{key}}"
+                <span id="installing-{{prop.id}}"
                   class="label label-default hidden">Installing</span>
                 <span
-                  id="installed-{{key}}"
+                  id="installed-{{prop.id}}"
                   class="label label-success {{ (prop.version != '' && prop.update_version == '') ? '':'hidden' }}">Up to date</span>
                 <span
-                  id="failed-{{key}}" class="label label-warning hidden">Failed</span>
-                <button id="{{key}}" type="button"
+                  id="failed-{{prop.id}}" class="label label-warning hidden">Failed</span>
+                <button id="{{prop.id}}" type="button"
                   class="btn btn-xs btn-primary {{ (prop.version == '' && prop.update_version != undefined) ? '':'hidden' }}"
                   ng-click="install(prop.id,prop.url)">Install</button>
-                <button id="{{key}}" type="button"
+                <button id="{{prop.id}}" type="button"
                   class="btn btn-xs btn-primary {{ (prop.version != '' && prop.update_version != '') ? '':'hidden' }}"
                   ng-click="install(prop.id,prop.url)">Upgrade</button>
               </h5>
