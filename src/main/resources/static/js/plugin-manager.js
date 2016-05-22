@@ -35,67 +35,73 @@ var app = angular.module('PluginManager', []).controller(
         return pluginIndex;
       }
 
-      $scope.refreshInstalled = function() {
+      $scope.refreshInstalled = function(refreshPluginId) {
         $http.get('/plugins/?all', plugins.httpConfig).then(
             function successCallback(response) {
 
               angular.forEach(response.data, function(plugin) {
-                var currPluginIdx = $scope.pluginIndexOf(plugin.id);
+                if (refreshPluginId == undefined
+                    || refreshPluginId == plugin.id) {
+                  var currPluginIdx = $scope.pluginIndexOf(plugin.id);
 
-                if (currPluginIdx < 0) {
-                  plugins.list.push({
-                    id : plugin.id,
-                    index_url : plugin.index_url,
-                    version : plugin.version,
-                    sha1 : '',
-                    url : plugin.url,
-                    update_version : ''
-                  });
-                } else {
-                  plugins.list[currPluginIdx] = {
-                    id : plugin.id,
-                    index_url : plugin.index_url,
-                    version : plugin.version,
-                    sha1 : '',
-                    url : plugin.url,
-                    update_version : ''
+                  if (currPluginIdx < 0) {
+                    plugins.list.push({
+                      id : plugin.id,
+                      index_url : plugin.index_url,
+                      version : plugin.version,
+                      sha1 : '',
+                      url : plugin.url,
+                      update_version : ''
+                    });
+                  } else {
+                    plugins.list[currPluginIdx] = {
+                      id : plugin.id,
+                      index_url : plugin.index_url,
+                      version : plugin.version,
+                      sha1 : '',
+                      url : plugin.url,
+                      update_version : ''
+                    }
                   }
                 }
               });
 
-              $scope.refreshAvailable();
+              $scope.refreshAvailable(refreshPluginId);
             }, function errorCallback(response) {
             });
       }
 
-      $scope.refreshAvailable = function() {
+      $scope.refreshAvailable = function(refreshPluginId) {
         $http.get('/plugins/plugin-manager/available', plugins.httpConfig)
             .then(
                 function successCallback(response) {
 
                   angular.forEach(response.data, function(plugin) {
-                    var currRow = $scope.pluginIndexOf(plugin.id);
-                    var currPlugin = currRow < 0 ? undefined
-                        : plugins.list[currRow];
+                    if (refreshPluginId == undefined
+                        || refreshPluginId == plugin.id) {
+                      var currRow = $scope.pluginIndexOf(plugin.id);
+                      var currPlugin = currRow < 0 ? undefined
+                          : plugins.list[currRow];
 
-                    if (currPlugin === undefined) {
-                      currPlugin = {
-                        id : plugin.id,
-                        index_url : '',
-                        version : ''
+                      if (currPlugin === undefined) {
+                        currPlugin = {
+                          id : plugin.id,
+                          index_url : '',
+                          version : ''
+                        }
                       }
-                    }
 
-                    if (plugin.version != currPlugin.version) {
-                      currPlugin.update_version = plugin.version;
-                    }
-                    currPlugin.sha1 = plugin.sha1;
-                    currPlugin.url = plugin.url;
+                      if (plugin.version != currPlugin.version) {
+                        currPlugin.update_version = plugin.version;
+                      }
+                      currPlugin.sha1 = plugin.sha1;
+                      currPlugin.url = plugin.url;
 
-                    if (currRow < 0) {
-                      plugins.list.push(currPlugin);
-                    } else {
-                      plugins.list[currRow] = currPlugin;
+                      if (currRow < 0) {
+                        plugins.list.push(currPlugin);
+                      } else {
+                        plugins.list[currRow] = currPlugin;
+                      }
                     }
                   });
                   plugins.available = response.data;
@@ -113,7 +119,7 @@ var app = angular.module('PluginManager', []).controller(
             function successCallback(response) {
               $("span#installing-" + id).addClass("hidden");
               $("span#installed-" + id).removeClass("hidden");
-              $scope.refreshInstalled();
+              $scope.refreshInstalled(id);
             }, function errorCallback(response) {
               $("span#installing-" + id).addClass("hidden");
               $("span#failed-" + id).removeClass("hidden");
