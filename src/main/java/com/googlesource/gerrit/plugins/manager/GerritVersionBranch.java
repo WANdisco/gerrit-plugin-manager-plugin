@@ -22,20 +22,21 @@ public class GerritVersionBranch {
         || !Character.isDigit(gerritVersion.trim().charAt(0))
         || gerritVersion.startsWith(GERRIT_NEXT_VERSION)) {
       return "master";
-    }
-    String[] versionNumbers = gerritVersion.split("\\.");
+    } else {
+      String[] versionNumbers = gerritVersion.split("\\.");
 
-    if (versionNumbers.length > 2) {
-      String fixVersionNumber = versionNumbers[2];
-      if (fixVersionNumber.contains("-")) {
-        String nextVersion =
-            String.format("%s.%d", versionNumbers[0],
-                Integer.parseInt(versionNumbers[1]) + 1);
-        if (nextVersion.equals(GERRIT_NEXT_VERSION)) {
-          return "master";
+      if (versionNumbers.length > 2) {
+        String fixVersionNumber = versionNumbers[2];
+        if (fixVersionNumber.contains("-")) {
+          String nextVersion =
+              String.format("%s.%d", versionNumbers[0],
+                  Integer.parseInt(versionNumbers[1]) + 1);
+          if (nextVersion.equals(GERRIT_NEXT_VERSION)) {
+            return "master";
+          }
         }
       }
+      return "stable-" + versionNumbers[0] + "." + versionNumbers[1];
     }
-    return "stable-" + versionNumbers[0] + "." + versionNumbers[1];
   }
 }

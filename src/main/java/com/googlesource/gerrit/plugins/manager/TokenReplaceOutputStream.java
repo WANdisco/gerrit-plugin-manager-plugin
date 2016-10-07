@@ -97,11 +97,9 @@ public class TokenReplaceOutputStream extends ServletOutputStream {
     flush();
   }
 
-  @Override
-  public void setWriteListener(WriteListener writeListener) {
+  public void setWriteListener(@SuppressWarnings("unused") WriteListener writeListener) {
   }
 
-  @Override
   public boolean isReady() {
     return true;
   }
