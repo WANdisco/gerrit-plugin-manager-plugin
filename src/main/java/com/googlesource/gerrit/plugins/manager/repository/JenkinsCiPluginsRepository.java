@@ -14,8 +14,6 @@
 
 package com.googlesource.gerrit.plugins.manager.repository;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
@@ -39,6 +37,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Optional;
+import java.util.function.Function;
 
 @Singleton
 public class JenkinsCiPluginsRepository implements PluginsRepository {
@@ -46,7 +46,7 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
   private static final Logger log = LoggerFactory
       .getLogger(JenkinsCiPluginsRepository.class);
 
-  private static final Optional<PluginInfo> noPluginInfo = Optional.absent();
+  private static final Optional<PluginInfo> noPluginInfo = Optional.empty();
 
   private final PluginManagerConfig config;
 
@@ -113,7 +113,7 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
     Optional<SmartJson> lastSuccessfulBuild =
         jobDetails.getOptional("lastSuccessfulBuild");
 
-    return lastSuccessfulBuild.transform(
+    return lastSuccessfulBuild.map(
         new Function<SmartJson, Optional<PluginInfo>>() {
           @Override
           public Optional<PluginInfo> apply(SmartJson build) {
@@ -125,7 +125,7 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
               return noPluginInfo;
             }
           }
-        }).or(noPluginInfo);
+        }).orElse(noPluginInfo);
   }
 
   private Optional<PluginInfo> getPluginArtifactInfo(SmartGson gson, String url)
@@ -134,12 +134,12 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
     JsonArray artifacts =
         buildExecution.get("artifacts").get().getAsJsonArray();
     if (artifacts.size() == 0) {
-      return Optional.absent();
+      return Optional.empty();
     }
 
     Optional<SmartJson> artifactJson = findArtifact(artifacts, ".jar");
     if (!artifactJson.isPresent()) {
-      return Optional.absent();
+      return Optional.empty();
     }
 
     String pluginPath = artifactJson.get().getString("relativePath");
@@ -205,6 +205,6 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
       }
     }
 
-    return Optional.absent();
+    return Optional.empty();
   }
 }

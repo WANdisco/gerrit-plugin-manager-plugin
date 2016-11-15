@@ -14,9 +14,10 @@
 
 package com.googlesource.gerrit.plugins.manager.gson;
 
-import com.google.common.base.Function;
-import com.google.common.base.Optional;
 import com.google.gson.JsonElement;
+
+import java.util.Optional;
+import java.util.function.Function;
 
 public class SmartJson {
 
@@ -31,7 +32,7 @@ public class SmartJson {
   }
 
   public Optional<String> getOptionalString(String fieldName) {
-    return getOptional(fieldName).transform(new Function<SmartJson, String>() {
+    return getOptional(fieldName).map(new Function<SmartJson, String>() {
       @Override
       public String apply(SmartJson elem) {
         if (!elem.jsonElem.isJsonPrimitive()) {
@@ -44,7 +45,7 @@ public class SmartJson {
   }
 
   public String getString(String fieldName) {
-    return getOptionalString(fieldName).or("");
+    return getOptionalString(fieldName).orElse("");
   }
 
   public Optional<SmartJson> getOptional(String fieldName) {
@@ -52,7 +53,7 @@ public class SmartJson {
       return Optional.of(SmartJson
           .of(jsonElem.getAsJsonObject().get(fieldName)));
     }
-    return Optional.absent();
+    return Optional.empty();
   }
 
   public SmartJson get(String fieldName) {
