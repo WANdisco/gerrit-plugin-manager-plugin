@@ -51,9 +51,8 @@ public class SmartJson {
     if (jsonElem != null && jsonElem.getAsJsonObject().get(fieldName) != null) {
       return Optional.of(SmartJson
           .of(jsonElem.getAsJsonObject().get(fieldName)));
-    } else {
-      return Optional.absent();
     }
+    return Optional.absent();
   }
 
   public SmartJson get(String fieldName) {

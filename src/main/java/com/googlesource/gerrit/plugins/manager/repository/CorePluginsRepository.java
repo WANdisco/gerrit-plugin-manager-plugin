@@ -81,10 +81,9 @@ public class CorePluginsRepository implements PluginsRepository {
                 pluginAttributes.getValue("Gerrit-PluginName"),
                 pluginAttributes.getValue("Implementation-Version"), "",
                 pluginUrl.toString());
-          } else {
-            return new PluginInfo(entryName.getFileName().toString(), "", "",
-                pluginUrl.toString());
           }
+          return new PluginInfo(entryName.getFileName().toString(), "", "",
+              pluginUrl.toString());
         } catch (IOException e) {
           log.error("Unable to open plugin " + pluginUrl, e);
           return null;
