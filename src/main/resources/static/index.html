@@ -16,7 +16,7 @@
 
 <body role="document">
   <nav class="navbar navbar-inverse navbar-fixed-top">
-    <div class="container">
+    <div class="container top-header">
       <div class="navbar-header">
         <a class="navbar-brand">Gerrit Plugins</a>
       </div>
@@ -29,13 +29,14 @@
   </nav>
   <div class="container main" role="main"
     ng-controller="LoadInstalledPlugins as plugins">
-    <div class="col-md-6">
-      <h2>Loaded</h2>
+    <div class="col-md-12">
       <table class="table table-striped">
         <thead>
           <tr>
             <th>Plugin Name</th>
             <th>Version</th>
+            <th>Upgrade / New Version Available</th>
+            <th>Latest Commit</th>
             <th>Actions</th>
           </tr>
         </thead>
@@ -43,38 +44,23 @@
           <tr ng-repeat="(key, prop) in plugins.list">
             <td>{{key}}</td>
             <td>{{prop.version}}</td>
-            <td></td>
-          </tr>
-        </tbody>
-      </table>
-    </div>
-    <div class="col-md-6">
-      <h2>Available</h2>
-      <table class="table table-striped">
-        <thead>
-          <tr>
-            <th>Plugin Name</th>
-            <th>Version</th>
-            <th>SHA1</th>
-            <th>Install</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr id="{{key}}-{{prop.version}}"
-            ng-repeat="(key, prop) in plugins.available">
-            <td>{{key}}</td>
-            <td>{{prop.version}}</td>
+            <td>{{prop.update_version}}</td>
             <td>{{prop.sha1}}</td>
             <td>
               <h5>
                 <span id="installing-{{key}}"
-                  class="label label-default hidden">Installing</span> <span
+                  class="label label-default hidden">Installing</span>
+                <span
                   id="installed-{{key}}"
-                  class="label label-success hidden">Installed</span> <span
+                  class="label label-success {{ (prop.version != '' && prop.update_version == '') ? '':'hidden' }}">Up to date</span>
+                <span
                   id="failed-{{key}}" class="label label-warning hidden">Failed</span>
                 <button id="{{key}}" type="button"
-                  class="btn btn-xs btn-primary"
+                  class="btn btn-xs btn-primary {{ (prop.version == '' && prop.update_version != undefined) ? '':'hidden' }}"
                   ng-click="install(prop.id,prop.url)">Install</button>
+                <button id="{{key}}" type="button"
+                  class="btn btn-xs btn-primary {{ (prop.version != '' && prop.update_version != '') ? '':'hidden' }}"
+                  ng-click="install(prop.id,prop.url)">Upgrade</button>
               </h5>
             </td>
           </tr>
