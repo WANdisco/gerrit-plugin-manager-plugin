@@ -16,7 +16,6 @@ package com.googlesource.gerrit.plugins.manager.repository;
 
 import com.google.common.base.Function;
 import com.google.common.base.Optional;
-import com.google.common.base.Strings;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
