@@ -22,6 +22,7 @@ import com.google.gerrit.server.plugins.PluginLoader;
 import com.google.inject.Inject;
 
 import java.io.IOException;
+import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -41,7 +42,7 @@ public class FirstWebLoginListener implements WebLoginListener {
       @PluginCanonicalWebUrl String pluginUrl) {
     this.pluginData = pluginData;
     this.pluginLoader = pluginLoader;
-    this.pluginUrl = pluginUrl;
+    this.pluginUrl = urlPath(pluginUrl);
   }
 
   @Override
@@ -63,5 +64,9 @@ public class FirstWebLoginListener implements WebLoginListener {
   @Override
   public void onLogout(IdentifiedUser user, HttpServletRequest request,
       HttpServletResponse response) {
+  }
+
+  private static String urlPath(String url) {
+    return URI.create(url).getPath();
   }
 }
