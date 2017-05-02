@@ -53,7 +53,7 @@ public class FirstWebLoginListener implements WebLoginListener {
       Path firstLoginFile =
           pluginData.resolve("firstLogin." + user.getAccountId().get());
       if (!firstLoginFile.toFile().exists()) {
-        response.sendRedirect(pluginUrl + "static/index.html");
+        response.sendRedirect(pluginUrl + "static/intro.html");
 
         Files.write(firstLoginFile, new Date().toString().getBytes(),
             StandardOpenOption.CREATE);
