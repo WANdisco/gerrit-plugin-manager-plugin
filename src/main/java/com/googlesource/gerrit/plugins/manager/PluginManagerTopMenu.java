@@ -14,7 +14,6 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
-import com.google.gerrit.extensions.annotations.PluginCanonicalWebUrl;
 import com.google.gerrit.extensions.client.MenuItem;
 import com.google.gerrit.extensions.webui.TopMenu;
 import com.google.gerrit.server.CurrentUser;
@@ -35,7 +34,7 @@ public class PluginManagerTopMenu implements TopMenu {
   private Provider<CurrentUser> userProvider;
 
   @Inject
-  public PluginManagerTopMenu(@PluginCanonicalWebUrl String myUrl,
+  public PluginManagerTopMenu(@PluginCanonicalWebUrlPath String myUrl,
       PluginLoader loader, Provider<CurrentUser> userProvider) {
     this.loader = loader;
     this.userProvider = userProvider;

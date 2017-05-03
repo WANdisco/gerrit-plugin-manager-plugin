@@ -28,6 +28,8 @@ public class Module extends AbstractModule {
 
   @Override
   protected void configure() {
+    bind(String.class).annotatedWith(PluginCanonicalWebUrlPath.class).toProvider(PluginCanonicalWebUrlPathProvider.class);
+
     DynamicSet.bind(binder(), TopMenu.class).to(PluginManagerTopMenu.class);
 
     DynamicSet.setOf(binder(), PluginsRepository.class);

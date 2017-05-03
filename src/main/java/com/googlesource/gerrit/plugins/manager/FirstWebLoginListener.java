@@ -14,15 +14,12 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
-import com.google.gerrit.extensions.annotations.PluginCanonicalWebUrl;
 import com.google.gerrit.extensions.annotations.PluginData;
 import com.google.gerrit.httpd.WebLoginListener;
 import com.google.gerrit.server.IdentifiedUser;
 import com.google.gerrit.server.plugins.PluginLoader;
 import com.google.inject.Inject;
-
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
@@ -34,15 +31,15 @@ import javax.servlet.http.HttpServletResponse;
 public class FirstWebLoginListener implements WebLoginListener {
   private final Path pluginData;
   private final PluginLoader pluginLoader;
-  private final String pluginUrl;
+  private final String pluginUrlPath;
 
   @Inject
   public FirstWebLoginListener(PluginLoader pluginLoader,
       @PluginData Path pluginData,
-      @PluginCanonicalWebUrl String pluginUrl) {
+      @PluginCanonicalWebUrlPath String pluginUrlPath) {
     this.pluginData = pluginData;
     this.pluginLoader = pluginLoader;
-    this.pluginUrl = urlPath(pluginUrl);
+    this.pluginUrlPath = pluginUrlPath;
   }
 
   @Override
@@ -53,7 +50,7 @@ public class FirstWebLoginListener implements WebLoginListener {
       Path firstLoginFile =
           pluginData.resolve("firstLogin." + user.getAccountId().get());
       if (!firstLoginFile.toFile().exists()) {
-        response.sendRedirect(pluginUrl + "static/intro.html");
+        response.sendRedirect(pluginUrlPath + "static/intro.html");
 
         Files.write(firstLoginFile, new Date().toString().getBytes(),
             StandardOpenOption.CREATE);
@@ -64,9 +61,5 @@ public class FirstWebLoginListener implements WebLoginListener {
   @Override
   public void onLogout(IdentifiedUser user, HttpServletRequest request,
       HttpServletResponse response) {
-  }
-
-  private static String urlPath(String url) {
-    return URI.create(url).getPath();
   }
 }
