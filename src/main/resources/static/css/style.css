@@ -24,6 +24,10 @@ button.btn-xs {
   width: 65px;
 }
 
+button.btn-sm {
+  width: 83px;
+}
+
 .label-success {
   background-color: #888888;
 }
