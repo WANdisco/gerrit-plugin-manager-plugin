@@ -42,11 +42,15 @@ public class CorePluginsRepository implements PluginsRepository {
   private static final Logger log = LoggerFactory
       .getLogger(CorePluginsRepository.class);
   private static final String GERRIT_VERSION = Version.getVersion();
+
   private final SitePaths site;
+  private final CorePluginsDescriptions pluginsDescriptions;
 
   @Inject
-  public CorePluginsRepository(SitePaths site) {
+  public CorePluginsRepository(SitePaths site,
+      CorePluginsDescriptions pd) {
     this.site = site;
+    this.pluginsDescriptions = pd;
   }
 
   static class SelectPluginsFromJar implements Predicate<JarEntry> {
@@ -58,7 +62,7 @@ public class CorePluginsRepository implements PluginsRepository {
     }
   }
 
-  static class ExtractPluginInfoFromJarEntry implements
+  class ExtractPluginInfoFromJarEntry implements
       Function<JarEntry, PluginInfo> {
     private String gerritWarFilename;
 
@@ -77,12 +81,14 @@ public class CorePluginsRepository implements PluginsRepository {
           Manifest manifestJarEntry = getManifestEntry(pluginJar);
           if (manifestJarEntry != null) {
             Attributes pluginAttributes = manifestJarEntry.getMainAttributes();
+            String pluginName = pluginAttributes.getValue("Gerrit-PluginName");
             return new PluginInfo(
-                pluginAttributes.getValue("Gerrit-PluginName"),
+                pluginName,
+                pluginsDescriptions.get(pluginName).orElse(""),
                 pluginAttributes.getValue("Implementation-Version"), "",
                 pluginUrl.toString());
           }
-          return new PluginInfo(entryName.getFileName().toString(), "", "",
+          return new PluginInfo(entryName.getFileName().toString(), "", "", "",
               pluginUrl.toString());
         } catch (IOException e) {
           log.error("Unable to open plugin " + pluginUrl, e);

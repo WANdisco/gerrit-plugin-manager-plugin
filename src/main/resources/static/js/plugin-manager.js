@@ -47,6 +47,7 @@ var app = angular.module('PluginManager', []).controller(
                   if (currPluginIdx < 0) {
                     plugins.list.push({
                       id : plugin.id,
+                      description : plugin.description,
                       index_url : plugin.index_url,
                       version : plugin.version,
                       sha1 : '',
@@ -56,6 +57,7 @@ var app = angular.module('PluginManager', []).controller(
                   } else {
                     plugins.list[currPluginIdx] = {
                       id : plugin.id,
+                      description : plugin.description,
                       index_url : plugin.index_url,
                       version : plugin.version,
                       sha1 : '',
@@ -96,6 +98,7 @@ var app = angular.module('PluginManager', []).controller(
                       }
                       currPlugin.sha1 = plugin.sha1;
                       currPlugin.url = plugin.url;
+                      currPlugin.description = plugin.description;
 
                       if (currRow < 0) {
                         plugins.list.push(currPlugin);

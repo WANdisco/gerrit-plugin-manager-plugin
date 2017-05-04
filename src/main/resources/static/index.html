@@ -39,17 +39,18 @@
           <tr>
             <th>Plugin Name</th>
             <th>Version</th>
-            <th>Upgrade / New Version Available</th>
-            <th>Latest Commit</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="prop in plugins.list | filter:searchPlugin">
-            <td>{{prop.id}}</td>
-            <td>{{prop.version}}</td>
-            <td>{{prop.update_version}}</td>
-            <td>{{prop.sha1}}</td>
+            <td><h4>{{prop.id}}<br/><small>{{prop.description.split('.')[0]}}</small></h4></td>
+            <td>
+              <p>{{prop.version}}</p>
+              <div ng-if="prop.update_version">
+              <span class="glyphicon glyphicon-save"></span><b>&nbsp;{{prop.update_version}}</b>
+              </div>
+            </td>
             <td>
               <h5>
                 <span id="installing-{{prop.id}}"
