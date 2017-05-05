@@ -27,7 +27,13 @@
           </div>
         </form>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="/">&gt; Go to Gerrit</a></li>
+          <li>
+            <div class="navbar-form navbar-right">
+              <button type="button"
+                  class="btn btn-sm btn-primary btn-100"
+                  ng-click="plugins.goToGerrit()">Done &raquo; Go To Gerrit</button>
+            </div>
+          </li>
         </ul>
       </div>
     </div>

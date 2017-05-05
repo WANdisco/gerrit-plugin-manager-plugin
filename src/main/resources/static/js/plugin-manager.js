@@ -14,7 +14,7 @@
 
 var app = angular.module('PluginManager', []).controller(
     'LoadInstalledPlugins',
-    function($scope, $http) {
+    function($scope, $http, $location, $window) {
       var plugins = this;
 
       plugins.list = [];
@@ -128,6 +128,16 @@ var app = angular.module('PluginManager', []).controller(
               $("span#failed-" + id).removeClass("hidden");
             });
       }
+
+      plugins.goToGerrit = function () {
+        var currUrl = $location.absUrl();
+        var indexOfHash = currUrl.indexOf("#")
+        if(indexOfHash > 0) {
+          currUrl = currUrl.substring(0,indexOfHash)
+        }
+        var newUrl = currUrl + "/../../../.."
+        $window.location.href = newUrl
+      };
 
       $scope.refreshInstalled();
     });

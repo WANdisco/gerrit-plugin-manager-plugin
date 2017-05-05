@@ -40,7 +40,7 @@ public class PluginManagerTopMenu implements TopMenu {
     this.userProvider = userProvider;
     this.menuEntries =
         Arrays.asList(new MenuEntry("Plugins", Arrays.asList(new MenuItem(
-            "Manage", myUrl + "static/index.html", "_blank"))));
+            "Manage", myUrl + "static/index.html", "_self"))));
   }
 
   @Override
