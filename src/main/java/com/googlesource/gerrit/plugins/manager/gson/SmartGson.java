@@ -17,7 +17,6 @@ package com.googlesource.gerrit.plugins.manager.gson;
 import com.google.gerrit.server.OutputFormat;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
-
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
@@ -47,8 +46,7 @@ public class SmartGson {
     try {
       ciUrl = new URL(url);
     } catch (MalformedURLException e) {
-      throw new IllegalArgumentException(
-          "Internal error: Gerrit CI URL seems to be malformed", e);
+      throw new IllegalArgumentException("Internal error: Gerrit CI URL seems to be malformed", e);
     }
     return new InputStreamReader(ciUrl.openStream());
   }

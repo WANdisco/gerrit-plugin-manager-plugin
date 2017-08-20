@@ -24,9 +24,7 @@ public class PluginManagerRestApiServlet extends RestApiServlet {
   private static final long serialVersionUID = 1L;
 
   @Inject
-  PluginManagerRestApiServlet(
-      Globals globals,
-      AvailablePluginsCollection members) {
+  PluginManagerRestApiServlet(Globals globals, AvailablePluginsCollection members) {
     super(globals, Providers.of(members));
   }
 }

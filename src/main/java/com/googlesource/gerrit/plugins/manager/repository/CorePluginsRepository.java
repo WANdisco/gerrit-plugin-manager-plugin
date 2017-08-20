@@ -20,10 +20,6 @@ import com.google.common.collect.FluentIterable;
 import com.google.gerrit.common.Version;
 import com.google.gerrit.server.config.SitePaths;
 import com.google.inject.Inject;
-
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -37,10 +33,11 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CorePluginsRepository implements PluginsRepository {
-  private static final Logger log = LoggerFactory
-      .getLogger(CorePluginsRepository.class);
+  private static final Logger log = LoggerFactory.getLogger(CorePluginsRepository.class);
   private static final String GERRIT_VERSION = Version.getVersion();
   private final SitePaths site;
 
@@ -53,13 +50,11 @@ public class CorePluginsRepository implements PluginsRepository {
     @Override
     public boolean apply(JarEntry entry) {
       String entryName = entry.getName();
-      return (entryName.startsWith("WEB-INF/plugins") &&
-              entryName.endsWith(".jar"));
+      return (entryName.startsWith("WEB-INF/plugins") && entryName.endsWith(".jar"));
     }
   }
 
-  static class ExtractPluginInfoFromJarEntry implements
-      Function<JarEntry, PluginInfo> {
+  static class ExtractPluginInfoFromJarEntry implements Function<JarEntry, PluginInfo> {
     private String gerritWarFilename;
 
     public ExtractPluginInfoFromJarEntry(String gerritWarFilename) {
@@ -70,20 +65,18 @@ public class CorePluginsRepository implements PluginsRepository {
     public PluginInfo apply(JarEntry entry) {
       try {
         Path entryName = Paths.get(entry.getName());
-        URI pluginUrl =
-            new URI("jar:file:" + gerritWarFilename + "!/" + entry.getName());
-        try (JarInputStream pluginJar =
-            new JarInputStream(pluginUrl.toURL().openStream())) {
+        URI pluginUrl = new URI("jar:file:" + gerritWarFilename + "!/" + entry.getName());
+        try (JarInputStream pluginJar = new JarInputStream(pluginUrl.toURL().openStream())) {
           Manifest manifestJarEntry = getManifestEntry(pluginJar);
           if (manifestJarEntry != null) {
             Attributes pluginAttributes = manifestJarEntry.getMainAttributes();
             return new PluginInfo(
                 pluginAttributes.getValue("Gerrit-PluginName"),
-                pluginAttributes.getValue("Implementation-Version"), "",
+                pluginAttributes.getValue("Implementation-Version"),
+                "",
                 pluginUrl.toString());
           }
-          return new PluginInfo(entryName.getFileName().toString(), "", "",
-              pluginUrl.toString());
+          return new PluginInfo(entryName.getFileName().toString(), "", "", pluginUrl.toString());
         } catch (IOException e) {
           log.error("Unable to open plugin " + pluginUrl, e);
           return null;
@@ -94,10 +87,10 @@ public class CorePluginsRepository implements PluginsRepository {
       }
     }
 
-    private Manifest getManifestEntry(JarInputStream pluginJar)
-        throws IOException {
-      for (JarEntry entry = pluginJar.getNextJarEntry(); entry != null; entry =
-          pluginJar.getNextJarEntry()) {
+    private Manifest getManifestEntry(JarInputStream pluginJar) throws IOException {
+      for (JarEntry entry = pluginJar.getNextJarEntry();
+          entry != null;
+          entry = pluginJar.getNextJarEntry()) {
         if (entry.getName().equals("META-INF/MANIFEST.MF")) {
           return new Manifest(pluginJar);
         }
@@ -110,8 +103,9 @@ public class CorePluginsRepository implements PluginsRepository {
   public Collection<PluginInfo> list(String gerritVersion) throws IOException {
     if (!gerritVersion.equals(GERRIT_VERSION)) {
       log.warn(
-          "No core plugins available for version {} which is different than " +
-          "the current running Gerrit", gerritVersion);
+          "No core plugins available for version {} which is different than "
+              + "the current running Gerrit",
+          gerritVersion);
       return Collections.emptyList();
     }
 
@@ -123,22 +117,23 @@ public class CorePluginsRepository implements PluginsRepository {
 
     try (JarFile gerritWar = new JarFile(gerritWarPath.toFile())) {
 
-      return FluentIterable
-          .from(Collections.list(gerritWar.entries()))
+      return FluentIterable.from(Collections.list(gerritWar.entries()))
           .filter(new SelectPluginsFromJar())
-          .transform(
-              new ExtractPluginInfoFromJarEntry(gerritWarPath.toString()))
-          .filter(new Predicate<PluginInfo>() {
-            @Override
-            public boolean apply(PluginInfo pluginInfo) {
-              return pluginInfo != null;
-            }
-          }).toSortedList(new Comparator<PluginInfo>() {
-            @Override
-            public int compare(PluginInfo a, PluginInfo b) {
-              return a.name.compareTo(b.name);
-            }
-          });
+          .transform(new ExtractPluginInfoFromJarEntry(gerritWarPath.toString()))
+          .filter(
+              new Predicate<PluginInfo>() {
+                @Override
+                public boolean apply(PluginInfo pluginInfo) {
+                  return pluginInfo != null;
+                }
+              })
+          .toSortedList(
+              new Comparator<PluginInfo>() {
+                @Override
+                public int compare(PluginInfo a, PluginInfo b) {
+                  return a.name.compareTo(b.name);
+                }
+              });
     }
   }
 }

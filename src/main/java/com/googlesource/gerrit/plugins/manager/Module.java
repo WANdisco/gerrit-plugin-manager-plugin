@@ -19,7 +19,6 @@ import com.google.gerrit.extensions.registration.DynamicSet;
 import com.google.gerrit.extensions.webui.TopMenu;
 import com.google.inject.AbstractModule;
 import com.google.inject.internal.UniqueAnnotations;
-
 import com.googlesource.gerrit.plugins.manager.repository.CorePluginsRepository;
 import com.googlesource.gerrit.plugins.manager.repository.JenkinsCiPluginsRepository;
 import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
@@ -36,8 +35,6 @@ public class Module extends AbstractModule {
 
     install(PluginsCentralCache.module());
 
-    bind(LifecycleListener.class).annotatedWith(UniqueAnnotations.create()).to(
-        OnStartStop.class);
-
+    bind(LifecycleListener.class).annotatedWith(UniqueAnnotations.create()).to(OnStartStop.class);
   }
 }

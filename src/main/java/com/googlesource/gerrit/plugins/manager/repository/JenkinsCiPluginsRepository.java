@@ -19,16 +19,10 @@ import com.google.gson.JsonElement;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-
 import com.googlesource.gerrit.plugins.manager.GerritVersionBranch;
 import com.googlesource.gerrit.plugins.manager.PluginManagerConfig;
 import com.googlesource.gerrit.plugins.manager.gson.SmartGson;
 import com.googlesource.gerrit.plugins.manager.gson.SmartJson;
-
-import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.IOException;
@@ -39,12 +33,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton
 public class JenkinsCiPluginsRepository implements PluginsRepository {
 
-  private static final Logger log = LoggerFactory
-      .getLogger(JenkinsCiPluginsRepository.class);
+  private static final Logger log = LoggerFactory.getLogger(JenkinsCiPluginsRepository.class);
 
   private static final Optional<PluginInfo> noPluginInfo = Optional.empty();
 
@@ -66,8 +62,7 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
   private final Provider<SmartGson> gsonProvider;
 
   @Inject
-  public JenkinsCiPluginsRepository(Provider<SmartGson> gsonProvider,
-      PluginManagerConfig config) {
+  public JenkinsCiPluginsRepository(Provider<SmartGson> gsonProvider, PluginManagerConfig config) {
     this.gsonProvider = gsonProvider;
     this.config = config;
   }
@@ -75,7 +70,7 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
   @Override
   public List<PluginInfo> list(String gerritVersion) throws IOException {
     List<PluginInfo> list = cache.get(gerritVersion);
-    if(list == null) {
+    if (list == null) {
       list = getList(gerritVersion);
       cache.put(gerritVersion, list);
     }
@@ -89,8 +84,7 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
 
     try {
       Job[] jobs =
-          gson.get(config.getJenkinsUrl() + "/view/" + viewName + "/api/json",
-              View.class).jobs;
+          gson.get(config.getJenkinsUrl() + "/view/" + viewName + "/api/json", View.class).jobs;
 
       for (Job job : jobs) {
         if (job.color.equals("blue")) {
@@ -107,32 +101,31 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
     return plugins;
   }
 
-  private Optional<PluginInfo> getPluginInfo(final SmartGson gson, String url)
-      throws IOException {
+  private Optional<PluginInfo> getPluginInfo(final SmartGson gson, String url) throws IOException {
     SmartJson jobDetails = gson.get(url + "/api/json");
-    Optional<SmartJson> lastSuccessfulBuild =
-        jobDetails.getOptional("lastSuccessfulBuild");
+    Optional<SmartJson> lastSuccessfulBuild = jobDetails.getOptional("lastSuccessfulBuild");
 
-    return lastSuccessfulBuild.map(
-        new Function<SmartJson, Optional<PluginInfo>>() {
-          @Override
-          public Optional<PluginInfo> apply(SmartJson build) {
-            String buildUrl = build.getString("url");
-            try {
-              return getPluginArtifactInfo(gson, buildUrl);
-            } catch (IOException e) {
-              log.warn("Cannot retrieve plugin artifact info from {}", buildUrl);
-              return noPluginInfo;
-            }
-          }
-        }).orElse(noPluginInfo);
+    return lastSuccessfulBuild
+        .map(
+            new Function<SmartJson, Optional<PluginInfo>>() {
+              @Override
+              public Optional<PluginInfo> apply(SmartJson build) {
+                String buildUrl = build.getString("url");
+                try {
+                  return getPluginArtifactInfo(gson, buildUrl);
+                } catch (IOException e) {
+                  log.warn("Cannot retrieve plugin artifact info from {}", buildUrl);
+                  return noPluginInfo;
+                }
+              }
+            })
+        .orElse(noPluginInfo);
   }
 
   private Optional<PluginInfo> getPluginArtifactInfo(SmartGson gson, String url)
       throws IOException {
     SmartJson buildExecution = gson.get(url + "/api/json");
-    JsonArray artifacts =
-        buildExecution.get("artifacts").get().getAsJsonArray();
+    JsonArray artifacts = buildExecution.get("artifacts").get().getAsJsonArray();
     if (artifacts.size() == 0) {
       return Optional.empty();
     }
@@ -150,47 +143,39 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
             ? fixPluginNameForMavenBuilds(pluginPathParts)
             : pluginPathParts[pluginPathParts.length - 2];
 
-    String pluginUrl =
-        String.format("%s/artifact/%s", buildExecution.getString("url"),
-            pluginPath);
+    String pluginUrl = String.format("%s/artifact/%s", buildExecution.getString("url"), pluginPath);
 
     String pluginVersion = "";
-    Optional<SmartJson> verArtifactJson =
-        findArtifact(artifacts, ".jar-version");
+    Optional<SmartJson> verArtifactJson = findArtifact(artifacts, ".jar-version");
     if (verArtifactJson.isPresent()) {
       String versionUrl =
-          String.format("%s/artifact/%s", buildExecution.getString("url"),
-              verArtifactJson.get().getString("relativePath"));
+          String.format(
+              "%s/artifact/%s",
+              buildExecution.getString("url"), verArtifactJson.get().getString("relativePath"));
       try (BufferedReader reader =
-          new BufferedReader(new InputStreamReader(
-              new URL(versionUrl).openStream()), 4096)) {
+          new BufferedReader(new InputStreamReader(new URL(versionUrl).openStream()), 4096)) {
         pluginVersion = reader.readLine();
       }
     }
 
     String sha1 = "";
-    for (JsonElement elem : buildExecution.get("actions").get()
-        .getAsJsonArray()) {
+    for (JsonElement elem : buildExecution.get("actions").get().getAsJsonArray()) {
       SmartJson elemJson = SmartJson.of(elem);
-      Optional<SmartJson> lastBuildRevision =
-          elemJson.getOptional("lastBuiltRevision");
+      Optional<SmartJson> lastBuildRevision = elemJson.getOptional("lastBuiltRevision");
 
       if (lastBuildRevision.isPresent()) {
         sha1 = lastBuildRevision.get().getString("SHA1").substring(0, 8);
       }
     }
 
-    return Optional.of(new PluginInfo(pluginName, pluginVersion, sha1,
-        pluginUrl));
+    return Optional.of(new PluginInfo(pluginName, pluginVersion, sha1, pluginUrl));
   }
 
   private String fixPluginNameForMavenBuilds(String[] pluginPathParts) {
     String mavenPluginFilename =
-        StringUtils.substringBeforeLast(
-            pluginPathParts[pluginPathParts.length - 1], ".");
+        StringUtils.substringBeforeLast(pluginPathParts[pluginPathParts.length - 1], ".");
     int versionDelim = mavenPluginFilename.indexOf('-');
-    return versionDelim > 0 ? mavenPluginFilename
-        .substring(0, versionDelim) : mavenPluginFilename;
+    return versionDelim > 0 ? mavenPluginFilename.substring(0, versionDelim) : mavenPluginFilename;
   }
 
   private boolean isMavenBuild(String[] pluginPathParts) {

@@ -29,16 +29,15 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 @Singleton
-public class AvailablePluginsCollection implements
-    RestCollection<TopLevelResource, PluginResource>,
-    AcceptsCreate<TopLevelResource> {
+public class AvailablePluginsCollection
+    implements RestCollection<TopLevelResource, PluginResource>, AcceptsCreate<TopLevelResource> {
 
   private final DynamicMap<RestView<PluginResource>> views;
   private final Provider<ListAvailablePlugins> list;
 
   @Inject
-  AvailablePluginsCollection(DynamicMap<RestView<PluginResource>> views,
-                             Provider<ListAvailablePlugins> list) {
+  AvailablePluginsCollection(
+      DynamicMap<RestView<PluginResource>> views, Provider<ListAvailablePlugins> list) {
     this.views = views;
     this.list = list;
   }
@@ -51,7 +50,7 @@ public class AvailablePluginsCollection implements
   @Override
   public PluginResource parse(TopLevelResource parent, IdString id)
       throws ResourceNotFoundException {
-      throw new ResourceNotFoundException(id);
+    throw new ResourceNotFoundException(id);
   }
 
   @Override
@@ -60,8 +59,8 @@ public class AvailablePluginsCollection implements
   }
 
   @Override
-  public <I> RestModifyView<TopLevelResource, I> create(
-      TopLevelResource parent, IdString id) throws RestApiException {
+  public <I> RestModifyView<TopLevelResource, I> create(TopLevelResource parent, IdString id)
+      throws RestApiException {
     throw new IllegalArgumentException("Operation not supported");
   }
 }

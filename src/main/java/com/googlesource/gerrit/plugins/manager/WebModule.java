@@ -22,8 +22,7 @@ public class WebModule extends ServletModule {
   @Override
   protected void configureServlets() {
     bind(AvailablePluginsCollection.class);
-    DynamicSet.bind(binder(), WebLoginListener.class)
-      .to(FirstWebLoginListener.class);
+    DynamicSet.bind(binder(), WebLoginListener.class).to(FirstWebLoginListener.class);
 
     serve("/available*").with(PluginManagerRestApiServlet.class);
 

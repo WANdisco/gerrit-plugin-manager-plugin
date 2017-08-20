@@ -20,14 +20,12 @@ import com.google.gerrit.server.config.PluginConfigFactory;
 import com.google.inject.Inject;
 
 public class PluginManagerConfig {
-  private static final String DEFAULT_GERRIT_CI_URL =
-      "https://gerrit-ci.gerritforge.com";
+  private static final String DEFAULT_GERRIT_CI_URL = "https://gerrit-ci.gerritforge.com";
 
   private final PluginConfig config;
 
   @Inject
-  public PluginManagerConfig(PluginConfigFactory configFactory,
-      @PluginName String pluginName) {
+  public PluginManagerConfig(PluginConfigFactory configFactory, @PluginName String pluginName) {
     this.config = configFactory.getFromGerritConfig(pluginName);
   }
 

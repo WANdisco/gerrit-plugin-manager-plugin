@@ -24,9 +24,7 @@ import com.google.gerrit.server.OutputFormat;
 import com.google.gson.JsonElement;
 import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
-
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -55,21 +53,23 @@ public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
     try {
       plugins = new ArrayList<>(pluginsCache.availablePlugins());
     } catch (ExecutionException e) {
-      throw new RestApiException(
-          "Unable to load the list of available plugins", e);
+      throw new RestApiException("Unable to load the list of available plugins", e);
     }
-    Collections.sort(plugins, new Comparator<PluginInfo>() {
-      @Override
-      public int compare(PluginInfo a, PluginInfo b) {
-        return a.name.compareTo(b.name);
-      }
-    });
+    Collections.sort(
+        plugins,
+        new Comparator<PluginInfo>() {
+          @Override
+          public int compare(PluginInfo a, PluginInfo b) {
+            return a.name.compareTo(b.name);
+          }
+        });
 
     for (PluginInfo p : plugins) {
       output.put(p.name, p);
     }
 
-    return OutputFormat.JSON.newGson().toJsonTree(output,
-        new TypeToken<Map<String, Object>>() {}.getType());
+    return OutputFormat.JSON
+        .newGson()
+        .toJsonTree(output, new TypeToken<Map<String, Object>>() {}.getType());
   }
 }

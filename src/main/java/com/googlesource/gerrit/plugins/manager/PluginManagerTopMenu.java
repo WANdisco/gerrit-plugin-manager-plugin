@@ -22,7 +22,6 @@ import com.google.gerrit.server.plugins.PluginLoader;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -35,13 +34,17 @@ public class PluginManagerTopMenu implements TopMenu {
   private Provider<CurrentUser> userProvider;
 
   @Inject
-  public PluginManagerTopMenu(@PluginCanonicalWebUrl String myUrl,
-      PluginLoader loader, Provider<CurrentUser> userProvider) {
+  public PluginManagerTopMenu(
+      @PluginCanonicalWebUrl String myUrl,
+      PluginLoader loader,
+      Provider<CurrentUser> userProvider) {
     this.loader = loader;
     this.userProvider = userProvider;
     this.menuEntries =
-        Arrays.asList(new MenuEntry("Plugins", Arrays.asList(new MenuItem(
-            "Manage", myUrl + "static/index.html", "_blank"))));
+        Arrays.asList(
+            new MenuEntry(
+                "Plugins",
+                Arrays.asList(new MenuItem("Manage", myUrl + "static/index.html", "_blank"))));
   }
 
   @Override
@@ -50,7 +53,6 @@ public class PluginManagerTopMenu implements TopMenu {
         && userProvider.get().getCapabilities().canAdministrateServer()) {
       return menuEntries;
     }
-
     return Collections.emptyList();
   }
 }

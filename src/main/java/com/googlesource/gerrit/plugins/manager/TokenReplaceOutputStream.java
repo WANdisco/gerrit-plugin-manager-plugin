@@ -17,7 +17,6 @@ package com.googlesource.gerrit.plugins.manager;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.Arrays;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
@@ -34,8 +33,8 @@ public class TokenReplaceOutputStream extends ServletOutputStream {
 
   private final int outLen;
 
-  public TokenReplaceOutputStream(HttpServletResponse resp, int contentLength,
-      byte[] token, byte[] replace) {
+  public TokenReplaceOutputStream(
+      HttpServletResponse resp, int contentLength, byte[] token, byte[] replace) {
     this.resp = resp;
     this.outLen = contentLength;
     this.token = token;
@@ -56,8 +55,7 @@ public class TokenReplaceOutputStream extends ServletOutputStream {
 
     byte[] outData = outBuff.toByteArray();
     byte[] cmp = new byte[token.length];
-    ByteArrayOutputStream convertedData =
-        new ByteArrayOutputStream(outData.length);
+    ByteArrayOutputStream convertedData = new ByteArrayOutputStream(outData.length);
 
     for (int i = 0; i < outData.length; i++) {
       byte b = outData[i];
@@ -98,8 +96,7 @@ public class TokenReplaceOutputStream extends ServletOutputStream {
   }
 
   @Override
-  public void setWriteListener(WriteListener writeListener) {
-  }
+  public void setWriteListener(WriteListener writeListener) {}
 
   @Override
   public boolean isReady() {

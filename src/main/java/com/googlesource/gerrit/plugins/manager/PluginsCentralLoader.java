@@ -19,18 +19,15 @@ import com.google.gerrit.common.Version;
 import com.google.gerrit.extensions.registration.DynamicSet;
 import com.google.inject.Inject;
 import com.google.inject.Singleton;
-
 import com.googlesource.gerrit.plugins.manager.PluginsCentralLoader.ListKey;
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
 import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
-
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 
 @Singleton
-public class PluginsCentralLoader extends
-    CacheLoader<ListKey, Collection<PluginInfo>> {
+public class PluginsCentralLoader extends CacheLoader<ListKey, Collection<PluginInfo>> {
 
   public static class ListKey {
     static final ListKey ALL = new ListKey();
@@ -58,12 +55,10 @@ public class PluginsCentralLoader extends
     return pluginsMap.values();
   }
 
-  private void addAll(Map<String, PluginInfo> pluginsMap,
-      Collection<PluginInfo> plugins) {
+  private void addAll(Map<String, PluginInfo> pluginsMap, Collection<PluginInfo> plugins) {
     for (PluginInfo pluginInfo : plugins) {
       PluginInfo currPlugin = pluginsMap.get(pluginInfo.name);
-      if (currPlugin == null
-          || isLaterVersion(pluginInfo.version, currPlugin.version)) {
+      if (currPlugin == null || isLaterVersion(pluginInfo.version, currPlugin.version)) {
         pluginsMap.put(pluginInfo.name, pluginInfo);
       }
     }

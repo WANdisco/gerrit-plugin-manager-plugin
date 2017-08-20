@@ -18,7 +18,8 @@ public class GerritVersionBranch {
   private static final String GERRIT_NEXT_VERSION = "2.13";
 
   public static String getBranch(String gerritVersion) {
-    if (gerritVersion == null || gerritVersion.trim().isEmpty()
+    if (gerritVersion == null
+        || gerritVersion.trim().isEmpty()
         || !Character.isDigit(gerritVersion.trim().charAt(0))
         || gerritVersion.startsWith(GERRIT_NEXT_VERSION)) {
       return "master";
@@ -29,8 +30,7 @@ public class GerritVersionBranch {
       String fixVersionNumber = versionNumbers[2];
       if (fixVersionNumber.contains("-")) {
         String nextVersion =
-            String.format("%s.%d", versionNumbers[0],
-                Integer.parseInt(versionNumbers[1]) + 1);
+            String.format("%s.%d", versionNumbers[0], Integer.parseInt(versionNumbers[1]) + 1);
         if (nextVersion.equals(GERRIT_NEXT_VERSION)) {
           return "master";
         }

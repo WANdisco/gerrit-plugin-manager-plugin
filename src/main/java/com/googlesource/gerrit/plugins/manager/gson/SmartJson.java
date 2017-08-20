@@ -15,7 +15,6 @@
 package com.googlesource.gerrit.plugins.manager.gson;
 
 import com.google.gson.JsonElement;
-
 import java.util.Optional;
 import java.util.function.Function;
 
@@ -32,16 +31,18 @@ public class SmartJson {
   }
 
   public Optional<String> getOptionalString(String fieldName) {
-    return getOptional(fieldName).map(new Function<SmartJson, String>() {
-      @Override
-      public String apply(SmartJson elem) {
-        if (!elem.jsonElem.isJsonPrimitive()) {
-          throw new IllegalArgumentException("cannot convert " + elem.jsonElem
-              + " into a String");
-        }
-        return elem.jsonElem.getAsString();
-      }
-    });
+    return getOptional(fieldName)
+        .map(
+            new Function<SmartJson, String>() {
+              @Override
+              public String apply(SmartJson elem) {
+                if (!elem.jsonElem.isJsonPrimitive()) {
+                  throw new IllegalArgumentException(
+                      "cannot convert " + elem.jsonElem + " into a String");
+                }
+                return elem.jsonElem.getAsString();
+              }
+            });
   }
 
   public String getString(String fieldName) {
@@ -50,8 +51,7 @@ public class SmartJson {
 
   public Optional<SmartJson> getOptional(String fieldName) {
     if (jsonElem != null && jsonElem.getAsJsonObject().get(fieldName) != null) {
-      return Optional.of(SmartJson
-          .of(jsonElem.getAsJsonObject().get(fieldName)));
+      return Optional.of(SmartJson.of(jsonElem.getAsJsonObject().get(fieldName)));
     }
     return Optional.empty();
   }

@@ -19,10 +19,8 @@ import com.google.gerrit.server.cache.CacheModule;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
-
 import com.googlesource.gerrit.plugins.manager.PluginsCentralLoader.ListKey;
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
-
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
@@ -47,9 +45,12 @@ public class PluginsCentralCache {
     return new CacheModule() {
       @Override
       protected void configure() {
-        cache(PluginsCentralCache.PLUGINS_LIST_CACHE_NAME, ListKey.class,
-            new TypeLiteral<Collection<PluginInfo>>() {}).expireAfterWrite(1,
-            TimeUnit.DAYS).loader(PluginsCentralLoader.class);
+        cache(
+                PluginsCentralCache.PLUGINS_LIST_CACHE_NAME,
+                ListKey.class,
+                new TypeLiteral<Collection<PluginInfo>>() {})
+            .expireAfterWrite(1, TimeUnit.DAYS)
+            .loader(PluginsCentralLoader.class);
 
         bind(PluginsCentralCache.class);
       }

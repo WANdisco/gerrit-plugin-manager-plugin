@@ -20,13 +20,11 @@ import com.google.gerrit.httpd.WebLoginListener;
 import com.google.gerrit.server.IdentifiedUser;
 import com.google.gerrit.server.plugins.PluginLoader;
 import com.google.inject.Inject;
-
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -36,7 +34,8 @@ public class FirstWebLoginListener implements WebLoginListener {
   private final String pluginUrl;
 
   @Inject
-  public FirstWebLoginListener(PluginLoader pluginLoader,
+  public FirstWebLoginListener(
+      PluginLoader pluginLoader,
       @PluginData Path pluginData,
       @PluginCanonicalWebUrl String pluginUrl) {
     this.pluginData = pluginData;
@@ -45,23 +44,19 @@ public class FirstWebLoginListener implements WebLoginListener {
   }
 
   @Override
-  public void onLogin(IdentifiedUser user, HttpServletRequest request,
-      HttpServletResponse response) throws IOException {
-    if (pluginLoader.isRemoteAdminEnabled()
-        && user.getCapabilities().canAdministrateServer()) {
-      Path firstLoginFile =
-          pluginData.resolve("firstLogin." + user.getAccountId().get());
+  public void onLogin(IdentifiedUser user, HttpServletRequest request, HttpServletResponse response)
+      throws IOException {
+    if (pluginLoader.isRemoteAdminEnabled() && user.getCapabilities().canAdministrateServer()) {
+      Path firstLoginFile = pluginData.resolve("firstLogin." + user.getAccountId().get());
       if (!firstLoginFile.toFile().exists()) {
         response.sendRedirect(pluginUrl + "static/index.html");
 
-        Files.write(firstLoginFile, new Date().toString().getBytes(),
-            StandardOpenOption.CREATE);
+        Files.write(firstLoginFile, new Date().toString().getBytes(), StandardOpenOption.CREATE);
       }
     }
   }
 
   @Override
-  public void onLogout(IdentifiedUser user, HttpServletRequest request,
-      HttpServletResponse response) {
-  }
+  public void onLogout(
+      IdentifiedUser user, HttpServletRequest request, HttpServletResponse response) {}
 }
