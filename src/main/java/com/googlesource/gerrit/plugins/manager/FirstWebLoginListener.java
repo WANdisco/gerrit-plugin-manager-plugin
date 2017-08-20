@@ -32,21 +32,24 @@ public class FirstWebLoginListener implements WebLoginListener {
   private final Path pluginData;
   private final PluginLoader pluginLoader;
   private final String pluginUrl;
+  private final PluginManagerConfig config;
 
   @Inject
   public FirstWebLoginListener(
       PluginLoader pluginLoader,
       @PluginData Path pluginData,
-      @PluginCanonicalWebUrl String pluginUrl) {
+      @PluginCanonicalWebUrl String pluginUrl,
+      PluginManagerConfig config) {
     this.pluginData = pluginData;
     this.pluginLoader = pluginLoader;
     this.pluginUrl = pluginUrl;
+    this.config = config;
   }
 
   @Override
   public void onLogin(IdentifiedUser user, HttpServletRequest request, HttpServletResponse response)
       throws IOException {
-    if (pluginLoader.isRemoteAdminEnabled() && user.getCapabilities().canAdministrateServer()) {
+    if (pluginLoader.isRemoteAdminEnabled() && config.canAdministerPlugins()) {
       Path firstLoginFile = pluginData.resolve("firstLogin." + user.getAccountId().get());
       if (!firstLoginFile.toFile().exists()) {
         response.sendRedirect(pluginUrl + "static/index.html");

@@ -17,10 +17,8 @@ package com.googlesource.gerrit.plugins.manager;
 import com.google.gerrit.extensions.annotations.PluginCanonicalWebUrl;
 import com.google.gerrit.extensions.client.MenuItem;
 import com.google.gerrit.extensions.webui.TopMenu;
-import com.google.gerrit.server.CurrentUser;
 import com.google.gerrit.server.plugins.PluginLoader;
 import com.google.inject.Inject;
-import com.google.inject.Provider;
 import com.google.inject.Singleton;
 import java.util.Arrays;
 import java.util.Collections;
@@ -29,17 +27,15 @@ import java.util.List;
 @Singleton
 public class PluginManagerTopMenu implements TopMenu {
 
-  private PluginLoader loader;
-  private List<MenuEntry> menuEntries;
-  private Provider<CurrentUser> userProvider;
+  private final PluginLoader loader;
+  private final PluginManagerConfig config;
+  private final List<MenuEntry> menuEntries;
 
   @Inject
   public PluginManagerTopMenu(
-      @PluginCanonicalWebUrl String myUrl,
-      PluginLoader loader,
-      Provider<CurrentUser> userProvider) {
+      @PluginCanonicalWebUrl String myUrl, PluginLoader loader, PluginManagerConfig config) {
     this.loader = loader;
-    this.userProvider = userProvider;
+    this.config = config;
     this.menuEntries =
         Arrays.asList(
             new MenuEntry(
@@ -49,8 +45,7 @@ public class PluginManagerTopMenu implements TopMenu {
 
   @Override
   public List<MenuEntry> getEntries() {
-    if (loader.isRemoteAdminEnabled()
-        && userProvider.get().getCapabilities().canAdministrateServer()) {
+    if (loader.isRemoteAdminEnabled() && config.canAdministerPlugins()) {
       return menuEntries;
     }
     return Collections.emptyList();

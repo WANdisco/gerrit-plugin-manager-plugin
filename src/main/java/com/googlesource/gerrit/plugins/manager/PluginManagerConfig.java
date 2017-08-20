@@ -15,18 +15,32 @@
 package com.googlesource.gerrit.plugins.manager;
 
 import com.google.gerrit.extensions.annotations.PluginName;
+import com.google.gerrit.extensions.restapi.AuthException;
+import com.google.gerrit.server.CurrentUser;
 import com.google.gerrit.server.config.PluginConfig;
 import com.google.gerrit.server.config.PluginConfigFactory;
+import com.google.gerrit.server.permissions.GlobalPermission;
+import com.google.gerrit.server.permissions.PermissionBackend;
+import com.google.gerrit.server.permissions.PermissionBackendException;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class PluginManagerConfig {
   private static final String DEFAULT_GERRIT_CI_URL = "https://gerrit-ci.gerritforge.com";
 
   private final PluginConfig config;
+  private final Provider<CurrentUser> currentUserProvider;
+  private final PermissionBackend permissions;
 
   @Inject
-  public PluginManagerConfig(PluginConfigFactory configFactory, @PluginName String pluginName) {
+  public PluginManagerConfig(
+      PluginConfigFactory configFactory,
+      @PluginName String pluginName,
+      Provider<CurrentUser> currentUserProvider,
+      PermissionBackend permissions) {
     this.config = configFactory.getFromGerritConfig(pluginName);
+    this.currentUserProvider = currentUserProvider;
+    this.permissions = permissions;
   }
 
   public String getJenkinsUrl() {
@@ -35,5 +49,14 @@ public class PluginManagerConfig {
 
   public boolean isCachePreloadEnabled() {
     return config.getBoolean("preload", true);
+  }
+
+  public boolean canAdministerPlugins() {
+    try {
+      permissions.user(currentUserProvider).check(GlobalPermission.ADMINISTRATE_SERVER);
+      return true;
+    } catch (AuthException | PermissionBackendException e) {
+      return false;
+    }
   }
 }
