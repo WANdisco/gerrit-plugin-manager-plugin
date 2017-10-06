@@ -59,7 +59,7 @@ public class AvailablePluginsCollection
   }
 
   @Override
-  public <I> RestModifyView<TopLevelResource, I> create(TopLevelResource parent, IdString id)
+  public RestModifyView<TopLevelResource, ?> create(TopLevelResource parent, IdString id)
       throws RestApiException {
     throw new IllegalArgumentException("Operation not supported");
   }
