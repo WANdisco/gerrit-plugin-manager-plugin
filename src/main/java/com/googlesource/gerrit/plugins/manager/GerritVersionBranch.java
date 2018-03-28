@@ -15,7 +15,7 @@
 package com.googlesource.gerrit.plugins.manager;
 
 public class GerritVersionBranch {
-  private static final String GERRIT_NEXT_VERSION = "2.13";
+  private static final String GERRIT_NEXT_VERSION = "2.15";
 
   public static String getBranch(String gerritVersion) {
     if (gerritVersion == null
@@ -25,6 +25,12 @@ public class GerritVersionBranch {
       return "master";
     }
     String[] versionNumbers = gerritVersion.split("\\.");
+    String major = versionNumbers[0];
+    String minor = versionNumbers[1];
+
+    if (minor.contains("-")) {
+      minor = minor.split("-")[0];
+    }
 
     if (versionNumbers.length > 2) {
       String fixVersionNumber = versionNumbers[2];
@@ -36,6 +42,7 @@ public class GerritVersionBranch {
         }
       }
     }
-    return "stable-" + versionNumbers[0] + "." + versionNumbers[1];
+
+    return "stable-" + major + "." + minor;
   }
 }

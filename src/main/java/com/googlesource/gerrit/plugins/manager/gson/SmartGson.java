@@ -35,6 +35,10 @@ public class SmartGson {
     return SmartJson.of(gson.fromJson(getReader(url), JsonObject.class));
   }
 
+  public SmartJson of(String jsonText) {
+    return SmartJson.of(gson.fromJson(jsonText, JsonObject.class));
+  }
+
   public <T> T get(String url, Class<T> classOfT) throws IOException {
     try (Reader reader = getReader(url)) {
       return gson.fromJson(reader, classOfT);

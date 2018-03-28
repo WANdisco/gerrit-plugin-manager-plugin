@@ -14,7 +14,7 @@
 
 var app = angular.module('PluginManager', []).controller(
     'LoadInstalledPlugins',
-    function($scope, $http) {
+    function($scope, $http, $location, $window) {
       var plugins = this;
 
       plugins.list = [];
@@ -47,6 +47,7 @@ var app = angular.module('PluginManager', []).controller(
                   if (currPluginIdx < 0) {
                     plugins.list.push({
                       id : plugin.id,
+                      description : plugin.description,
                       index_url : plugin.index_url,
                       version : plugin.version,
                       sha1 : '',
@@ -56,6 +57,7 @@ var app = angular.module('PluginManager', []).controller(
                   } else {
                     plugins.list[currPluginIdx] = {
                       id : plugin.id,
+                      description : plugin.description,
                       index_url : plugin.index_url,
                       version : plugin.version,
                       sha1 : '',
@@ -96,6 +98,7 @@ var app = angular.module('PluginManager', []).controller(
                       }
                       currPlugin.sha1 = plugin.sha1;
                       currPlugin.url = plugin.url;
+                      currPlugin.description = plugin.description;
 
                       if (currRow < 0) {
                         plugins.list.push(currPlugin);
@@ -125,6 +128,16 @@ var app = angular.module('PluginManager', []).controller(
               $("span#failed-" + id).removeClass("hidden");
             });
       }
+
+      plugins.goToGerrit = function () {
+        var currUrl = $location.absUrl();
+        var indexOfHash = currUrl.indexOf("#")
+        if(indexOfHash > 0) {
+          currUrl = currUrl.substring(0,indexOfHash)
+        }
+        var newUrl = currUrl + "/../../../.."
+        $window.location.href = newUrl
+      };
 
       $scope.refreshInstalled();
     });

@@ -27,7 +27,13 @@
           </div>
         </form>
         <ul class="nav navbar-nav navbar-right">
-          <li><a href="/">&gt; Go to Gerrit</a></li>
+          <li>
+            <div class="navbar-form navbar-right">
+              <button type="button"
+                  class="btn btn-sm btn-primary btn-100"
+                  ng-click="plugins.goToGerrit()">Done &raquo; Go To Gerrit</button>
+            </div>
+          </li>
         </ul>
       </div>
     </div>
@@ -39,19 +45,20 @@
           <tr>
             <th>Plugin Name</th>
             <th>Version</th>
-            <th>Upgrade / New Version Available</th>
-            <th>Latest Commit</th>
             <th>Actions</th>
           </tr>
         </thead>
         <tbody>
           <tr ng-repeat="prop in plugins.list | filter:searchPlugin">
-            <td>{{prop.id}}</td>
-            <td>{{prop.version}}</td>
-            <td>{{prop.update_version}}</td>
-            <td>{{prop.sha1}}</td>
+            <td><h4>{{prop.id}}<br/><small>{{prop.description.split('.')[0]}}</small></h4></td>
             <td>
-              <h5>
+              <p>{{prop.version}}</p>
+              <div ng-if="prop.update_version">
+              <span class="glyphicon glyphicon-save"></span><b>&nbsp;{{prop.update_version}}</b>
+              </div>
+            </td>
+            <td>
+              <h4>
                 <span id="installing-{{prop.id}}"
                   class="label label-default hidden">Installing</span>
                 <span
@@ -60,12 +67,12 @@
                 <span
                   id="failed-{{prop.id}}" class="label label-warning hidden">Failed</span>
                 <button id="{{prop.id}}" type="button"
-                  class="btn btn-xs btn-primary {{ (prop.version == '' && prop.update_version != undefined) ? '':'hidden' }}"
+                  class="btn btn-sm btn-primary {{ (prop.version == '' && prop.update_version != undefined) ? '':'hidden' }}"
                   ng-click="install(prop.id,prop.url)">Install</button>
                 <button id="{{prop.id}}" type="button"
-                  class="btn btn-xs btn-primary {{ (prop.version != '' && prop.update_version != '') ? '':'hidden' }}"
+                  class="btn btn-sm btn-primary {{ (prop.version != '' && prop.update_version != '') ? '':'hidden' }}"
                   ng-click="install(prop.id,prop.url)">Upgrade</button>
-              </h5>
+              </h4>
             </td>
           </tr>
         </tbody>

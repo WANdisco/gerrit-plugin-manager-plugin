@@ -14,7 +14,6 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
-import com.google.gerrit.extensions.annotations.PluginCanonicalWebUrl;
 import com.google.gerrit.extensions.annotations.PluginData;
 import com.google.gerrit.httpd.WebLoginListener;
 import com.google.gerrit.server.IdentifiedUser;
@@ -31,18 +30,18 @@ import javax.servlet.http.HttpServletResponse;
 public class FirstWebLoginListener implements WebLoginListener {
   private final Path pluginData;
   private final PluginLoader pluginLoader;
-  private final String pluginUrl;
   private final PluginManagerConfig config;
+  private final String pluginUrlPath;
 
   @Inject
   public FirstWebLoginListener(
       PluginLoader pluginLoader,
       @PluginData Path pluginData,
-      @PluginCanonicalWebUrl String pluginUrl,
+      @PluginCanonicalWebUrlPath String pluginUrlPath,
       PluginManagerConfig config) {
     this.pluginData = pluginData;
     this.pluginLoader = pluginLoader;
-    this.pluginUrl = pluginUrl;
+    this.pluginUrlPath = pluginUrlPath;
     this.config = config;
   }
 
@@ -52,7 +51,7 @@ public class FirstWebLoginListener implements WebLoginListener {
     if (pluginLoader.isRemoteAdminEnabled() && config.canAdministerPlugins()) {
       Path firstLoginFile = pluginData.resolve("firstLogin." + user.getAccountId().get());
       if (!firstLoginFile.toFile().exists()) {
-        response.sendRedirect(pluginUrl + "static/index.html");
+        response.sendRedirect(pluginUrlPath + "static/intro.html");
 
         Files.write(firstLoginFile, new Date().toString().getBytes(), StandardOpenOption.CREATE);
       }
