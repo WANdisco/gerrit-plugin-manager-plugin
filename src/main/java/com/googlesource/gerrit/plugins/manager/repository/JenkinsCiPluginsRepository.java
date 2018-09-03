@@ -231,7 +231,8 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
   private Optional<SmartJson> findArtifact(JsonArray artifacts, String string) {
     for (int i = 0; i < artifacts.size(); i++) {
       SmartJson artifact = SmartJson.of(artifacts.get(i));
-      if (artifact.getString("relativePath").endsWith(string)) {
+      String path = artifact.getString("relativePath");
+      if (path.endsWith(string) && !path.endsWith("-static" + string)) {
         return Optional.of(artifact);
       }
     }
