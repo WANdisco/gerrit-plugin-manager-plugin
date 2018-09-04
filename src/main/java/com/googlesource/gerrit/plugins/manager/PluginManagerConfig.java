@@ -53,7 +53,7 @@ public class PluginManagerConfig {
 
   public boolean canAdministerPlugins() {
     try {
-      permissions.user(currentUserProvider).check(GlobalPermission.ADMINISTRATE_SERVER);
+      permissions.user(currentUserProvider.get()).check(GlobalPermission.ADMINISTRATE_SERVER);
       return true;
     } catch (AuthException | PermissionBackendException e) {
       return false;

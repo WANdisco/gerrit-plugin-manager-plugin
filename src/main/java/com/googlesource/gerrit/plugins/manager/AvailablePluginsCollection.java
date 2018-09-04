@@ -15,12 +15,9 @@
 package com.googlesource.gerrit.plugins.manager;
 
 import com.google.gerrit.extensions.registration.DynamicMap;
-import com.google.gerrit.extensions.restapi.AcceptsCreate;
 import com.google.gerrit.extensions.restapi.IdString;
 import com.google.gerrit.extensions.restapi.ResourceNotFoundException;
-import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.RestCollection;
-import com.google.gerrit.extensions.restapi.RestModifyView;
 import com.google.gerrit.extensions.restapi.RestView;
 import com.google.gerrit.extensions.restapi.TopLevelResource;
 import com.google.gerrit.server.plugins.PluginResource;
@@ -30,7 +27,7 @@ import com.google.inject.Singleton;
 
 @Singleton
 public class AvailablePluginsCollection
-    implements RestCollection<TopLevelResource, PluginResource>, AcceptsCreate<TopLevelResource> {
+    implements RestCollection<TopLevelResource, PluginResource> {
 
   private final DynamicMap<RestView<PluginResource>> views;
   private final Provider<ListAvailablePlugins> list;
@@ -56,11 +53,5 @@ public class AvailablePluginsCollection
   @Override
   public DynamicMap<RestView<PluginResource>> views() {
     return views;
-  }
-
-  @Override
-  public RestModifyView<TopLevelResource, ?> create(TopLevelResource parent, IdString id)
-      throws RestApiException {
-    throw new IllegalArgumentException("Operation not supported");
   }
 }
