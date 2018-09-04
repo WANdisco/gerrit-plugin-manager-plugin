@@ -49,7 +49,7 @@ public class PluginsCentralCache {
                 PluginsCentralCache.PLUGINS_LIST_CACHE_NAME,
                 ListKey.class,
                 new TypeLiteral<Collection<PluginInfo>>() {})
-            .expireAfterWrite(Duration.ofDays(10))
+            .expireAfterWrite(Duration.ofDays(1))
             .loader(PluginsCentralLoader.class);
 
         bind(PluginsCentralCache.class);
