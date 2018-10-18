@@ -21,9 +21,9 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
 import com.googlesource.gerrit.plugins.manager.PluginsCentralLoader.ListKey;
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
-import java.time.Duration;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 public class PluginsCentralCache {
 
@@ -49,7 +49,7 @@ public class PluginsCentralCache {
                 PluginsCentralCache.PLUGINS_LIST_CACHE_NAME,
                 ListKey.class,
                 new TypeLiteral<Collection<PluginInfo>>() {})
-            .expireAfterWrite(Duration.ofDays(1))
+            .expireAfterWrite(1, TimeUnit.DAYS)
             .loader(PluginsCentralLoader.class);
 
         bind(PluginsCentralCache.class);
