@@ -15,7 +15,7 @@
 package com.googlesource.gerrit.plugins.manager;
 
 public class GerritVersionBranch {
-  private static final String GERRIT_NEXT_VERSION = "2.16";
+  private static final String GERRIT_NEXT_VERSION = "3.0";
 
   public static String getBranch(String gerritVersion) {
     if (gerritVersion == null
