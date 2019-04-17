@@ -27,6 +27,7 @@ public class CorePluginsDescriptions {
   @Inject
   public CorePluginsDescriptions() {
     pluginsDescriptions = new HashMap<>();
+    pluginsDescriptions.put("codemirror-editor", "CodeMirror plugin for polygerrit");
     pluginsDescriptions.put("commit-message-length-validator",
         "Plugin to validate that commit messages conform to length limits");
     pluginsDescriptions.put("download-commands", "Adds the standard download schemes and commands");
