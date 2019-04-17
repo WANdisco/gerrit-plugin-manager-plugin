@@ -14,7 +14,7 @@
 
 package com.googlesource.gerrit.plugins.manager.gson;
 
-import com.google.gerrit.server.OutputFormat;
+import com.google.gerrit.json.OutputFormat;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import java.io.IOException;
