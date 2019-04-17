@@ -16,11 +16,10 @@ package com.googlesource.gerrit.plugins.manager;
 
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
+import com.google.inject.BindingAnnotation;
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
-
-import com.google.inject.BindingAnnotation;
 
 /**
  * Annotation applied to a String containing the plugin canonical web URL path.

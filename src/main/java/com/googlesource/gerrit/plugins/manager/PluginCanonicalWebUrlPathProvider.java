@@ -14,12 +14,11 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
-import java.net.URI;
-
 import com.google.gerrit.extensions.annotations.PluginCanonicalWebUrl;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.Singleton;
+import java.net.URI;
 
 @Singleton
 public class PluginCanonicalWebUrlPathProvider implements Provider<String> {
