@@ -34,6 +34,8 @@ public class CorePluginsDescriptions {
     pluginsDescriptions.put("download-commands", "Adds the standard download schemes and commands");
     pluginsDescriptions.put("gitiles", "Plugin running Gitiles alongside a Gerrit server");
     pluginsDescriptions.put("hooks", "Old-style fork+exec hooks");
+    pluginsDescriptions.put(
+        "plugin-manager", "Adds support for discovering and installing other plugins");
     pluginsDescriptions.put("replication", "Copies to other servers using the Git protocol");
     pluginsDescriptions.put(
         "reviewnotes", "Annotates merged commits using notes on refs/notes/review");
