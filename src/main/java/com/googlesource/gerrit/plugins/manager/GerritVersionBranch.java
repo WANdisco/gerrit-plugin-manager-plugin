@@ -34,7 +34,7 @@ public class GerritVersionBranch {
 
     if (versionNumbers.length > 2) {
       String fixVersionNumber = versionNumbers[2];
-      if (fixVersionNumber.contains("-")) {
+      if (fixVersionNumber.contains("-g")) {
         String nextVersion =
             String.format("%s.%d", versionNumbers[0], Integer.parseInt(versionNumbers[1]) + 1);
         if (nextVersion.equals(GERRIT_NEXT_VERSION)) {
