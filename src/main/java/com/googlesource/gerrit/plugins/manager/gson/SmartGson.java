@@ -14,6 +14,8 @@
 
 package com.googlesource.gerrit.plugins.manager.gson;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.gerrit.json.OutputFormat;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
@@ -52,6 +54,6 @@ public class SmartGson {
     } catch (MalformedURLException e) {
       throw new IllegalArgumentException("Internal error: Gerrit CI URL seems to be malformed", e);
     }
-    return new InputStreamReader(ciUrl.openStream());
+    return new InputStreamReader(ciUrl.openStream(), UTF_8);
   }
 }

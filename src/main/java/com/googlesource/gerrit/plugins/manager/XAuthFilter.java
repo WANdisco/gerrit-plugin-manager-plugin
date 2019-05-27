@@ -14,6 +14,8 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.httpd.WebSession;
 import com.google.gerrit.server.AccessPath;
@@ -85,8 +87,8 @@ public class XAuthFilter implements Filter {
               return new TokenReplaceOutputStream(
                   (HttpServletResponse) getResponse(),
                   origContentLength,
-                  "@X-Gerrit-Auth".getBytes(),
-                  gerritAuth.getBytes());
+                  "@X-Gerrit-Auth".getBytes(UTF_8),
+                  gerritAuth.getBytes(UTF_8));
             }
           };
 

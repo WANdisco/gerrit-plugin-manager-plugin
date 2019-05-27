@@ -14,6 +14,8 @@
 
 package com.googlesource.gerrit.plugins.manager.repository;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
@@ -168,7 +170,8 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
               "%s/artifact/%s",
               buildExecution.getString("url"), verArtifactJson.get().getString("relativePath"));
       try (BufferedReader reader =
-          new BufferedReader(new InputStreamReader(new URL(versionUrl).openStream()), 4096)) {
+          new BufferedReader(
+              new InputStreamReader(new URL(versionUrl).openStream(), UTF_8), 4096)) {
         String line;
         while ((line = reader.readLine()) != null) {
           if (artifactBody.length() > 0) {

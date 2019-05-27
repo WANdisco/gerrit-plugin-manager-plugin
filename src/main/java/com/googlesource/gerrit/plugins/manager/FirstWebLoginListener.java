@@ -14,6 +14,8 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
+import static java.nio.charset.StandardCharsets.UTF_8;
+
 import com.google.gerrit.extensions.annotations.PluginData;
 import com.google.gerrit.httpd.WebLoginListener;
 import com.google.gerrit.server.IdentifiedUser;
@@ -53,7 +55,8 @@ public class FirstWebLoginListener implements WebLoginListener {
       if (!firstLoginFile.toFile().exists()) {
         response.sendRedirect(pluginUrlPath + "static/intro.html");
 
-        Files.write(firstLoginFile, new Date().toString().getBytes(), StandardOpenOption.CREATE);
+        Files.write(
+            firstLoginFile, new Date().toString().getBytes(UTF_8), StandardOpenOption.CREATE);
       }
     }
   }
