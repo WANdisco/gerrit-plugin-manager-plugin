@@ -17,6 +17,7 @@ package com.googlesource.gerrit.plugins.manager;
 import com.google.common.collect.Maps;
 import com.google.gerrit.common.data.GlobalCapability;
 import com.google.gerrit.extensions.annotations.RequiresCapability;
+import com.google.gerrit.extensions.restapi.Response;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.RestReadView;
 import com.google.gerrit.extensions.restapi.TopLevelResource;
@@ -40,7 +41,8 @@ public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
   }
 
   @Override
-  public Map<String, PluginInfo> apply(TopLevelResource resource) throws RestApiException {
+  public Response<Map<String, PluginInfo>> apply(TopLevelResource resource)
+      throws RestApiException {
     Map<String, PluginInfo> output = Maps.newTreeMap();
     List<PluginInfo> plugins;
     try {
@@ -61,6 +63,6 @@ public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
       output.put(p.name, p);
     }
 
-    return output;
+    return Response.ok(output);
   }
 }
