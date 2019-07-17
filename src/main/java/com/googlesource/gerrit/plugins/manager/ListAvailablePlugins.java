@@ -20,9 +20,6 @@ import com.google.gerrit.extensions.annotations.RequiresCapability;
 import com.google.gerrit.extensions.restapi.RestApiException;
 import com.google.gerrit.extensions.restapi.RestReadView;
 import com.google.gerrit.extensions.restapi.TopLevelResource;
-import com.google.gerrit.json.OutputFormat;
-import com.google.gson.JsonElement;
-import com.google.gson.reflect.TypeToken;
 import com.google.inject.Inject;
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
 import java.util.ArrayList;
@@ -43,11 +40,7 @@ public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
   }
 
   @Override
-  public Object apply(TopLevelResource resource) throws RestApiException {
-    return display();
-  }
-
-  public JsonElement display() throws RestApiException {
+  public Map<String, PluginInfo> apply(TopLevelResource resource) throws RestApiException {
     Map<String, PluginInfo> output = Maps.newTreeMap();
     List<PluginInfo> plugins;
     try {
@@ -68,8 +61,6 @@ public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
       output.put(p.name, p);
     }
 
-    return OutputFormat.JSON
-        .newGson()
-        .toJsonTree(output, new TypeToken<Map<String, Object>>() {}.getType());
+    return output;
   }
 }
