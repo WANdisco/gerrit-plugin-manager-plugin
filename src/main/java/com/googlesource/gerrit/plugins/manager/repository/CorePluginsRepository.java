@@ -82,7 +82,11 @@ public class CorePluginsRepository implements PluginsRepository {
                 pluginUrl.toString());
           }
           return new PluginInfo(
-              entryName.getFileName().toString(), "", "", "", pluginUrl.toString());
+              dropSuffix(entryName.getFileName().toString(), ".jar"),
+              "",
+              "",
+              "",
+              pluginUrl.toString());
         } catch (IOException e) {
           log.error("Unable to open plugin " + pluginUrl, e);
           return null;
@@ -91,6 +95,12 @@ public class CorePluginsRepository implements PluginsRepository {
         log.error("Invalid plugin filename", e);
         return null;
       }
+    }
+
+    private String dropSuffix(String string, String suffix) {
+      return string.endsWith(suffix)
+          ? string.substring(0, string.length() - suffix.length())
+          : string;
     }
 
     private Manifest getManifestEntry(JarInputStream pluginJar) throws IOException {
