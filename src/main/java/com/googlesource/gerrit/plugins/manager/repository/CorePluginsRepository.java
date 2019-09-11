@@ -29,6 +29,7 @@ import java.net.URISyntaxException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.jar.Attributes;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -57,23 +58,25 @@ public class CorePluginsRepository implements PluginsRepository {
       URI pluginUrl =
           new URI("jar:file:" + requireNonNull(site.gerrit_war) + "!/" + entry.getName());
       try (JarInputStream pluginJar = new JarInputStream(pluginUrl.toURL().openStream())) {
-        Manifest manifestJarEntry = getManifestEntry(pluginJar);
-        if (manifestJarEntry != null) {
-          Attributes pluginAttributes = manifestJarEntry.getMainAttributes();
-          String pluginName = pluginAttributes.getValue("Gerrit-PluginName");
-          return new PluginInfo(
-              pluginName,
-              pluginsDescriptions.get(pluginName).orElse(""),
-              pluginAttributes.getValue("Implementation-Version"),
-              "",
-              pluginUrl.toString());
-        }
-        return new PluginInfo(
-            dropSuffix(entryName.getFileName().toString(), ".jar"),
-            "",
-            "",
-            "",
-            pluginUrl.toString());
+        return getManifestEntry(pluginJar)
+            .map(
+                m -> {
+                  Attributes pluginAttributes = m.getMainAttributes();
+                  String pluginName = pluginAttributes.getValue("Gerrit-PluginName");
+                  return new PluginInfo(
+                      pluginName,
+                      pluginsDescriptions.get(pluginName).orElse(""),
+                      pluginAttributes.getValue("Implementation-Version"),
+                      "",
+                      pluginUrl.toString());
+                })
+            .orElse(
+                new PluginInfo(
+                    dropSuffix(entryName.getFileName().toString(), ".jar"),
+                    "",
+                    "",
+                    "",
+                    pluginUrl.toString()));
       } catch (IOException e) {
         log.error("Unable to open plugin " + pluginUrl, e);
         return null;
@@ -91,15 +94,15 @@ public class CorePluginsRepository implements PluginsRepository {
   }
 
   @Nullable
-  private static Manifest getManifestEntry(JarInputStream pluginJar) throws IOException {
+  private static Optional<Manifest> getManifestEntry(JarInputStream pluginJar) throws IOException {
     for (JarEntry entry = pluginJar.getNextJarEntry();
         entry != null;
         entry = pluginJar.getNextJarEntry()) {
-      if (entry.getName().equals("META-INF/MANIFEST.MF")) {
-        return new Manifest(pluginJar);
+      if (entry.getName().equals(JarFile.MANIFEST_NAME)) {
+        return Optional.of(new Manifest(pluginJar));
       }
     }
-    return null;
+    return Optional.empty();
   }
 
   @Override
