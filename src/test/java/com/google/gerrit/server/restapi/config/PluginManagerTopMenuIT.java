@@ -68,7 +68,7 @@ public class PluginManagerTopMenuIT extends LightweightPluginDaemonTest {
     assertThat(pluginTopMenuEntries()).isEmpty();
   }
 
-  private List<MenuEntry> pluginTopMenuEntries() {
+  private List<MenuEntry> pluginTopMenuEntries() throws Exception {
     List<MenuEntry> topMenuItems = topMenus.apply(new ConfigResource()).value();
     return topMenuItems;
   }
