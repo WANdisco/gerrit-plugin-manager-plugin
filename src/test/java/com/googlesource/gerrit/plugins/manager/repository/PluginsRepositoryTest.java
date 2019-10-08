@@ -57,8 +57,6 @@ public class PluginsRepositoryTest {
     Files.createSymbolicLink(site.gerrit_war, pathToReleaseWar);
 
     Collection<PluginInfo> plugins = pluginRepo.list(Version.getVersion());
-    assertThat(plugins).hasSize(GERRIT_CORE_PLUGINS.size());
-
     assertThat(plugins.stream().map(p -> p.name).sorted().collect(toList()))
         .containsExactlyElementsIn(GERRIT_CORE_PLUGINS)
         .inOrder();
