@@ -15,6 +15,7 @@
 package com.googlesource.gerrit.plugins.manager.repository;
 
 import static com.google.common.truth.Truth.assertThat;
+import static com.google.common.truth.TruthJUnit.assume;
 import static java.util.stream.Collectors.toList;
 
 import com.google.common.collect.ImmutableList;
@@ -49,10 +50,8 @@ public class PluginsRepositoryTest {
     PluginsRepository pluginRepo = new CorePluginsRepository(site, new CorePluginsDescriptions());
 
     Path pathToReleaseWar =
-        Paths.get(System.getenv("TEST_SRCDIR"), System.getenv("TEST_WORKSPACE"), "release.war");
-    if (!pathToReleaseWar.toFile().exists()) {
-      throw new IllegalStateException("Cannot find release.war");
-    }
+        Paths.get(getenv("TEST_SRCDIR"), getenv("TEST_WORKSPACE"), "release.war");
+    assume().that(pathToReleaseWar.toFile().exists()).isTrue();
     Files.createDirectories(site.bin_dir);
     Files.createSymbolicLink(site.gerrit_war, pathToReleaseWar);
 
@@ -60,6 +59,12 @@ public class PluginsRepositoryTest {
     assertThat(plugins.stream().map(p -> p.name).sorted().collect(toList()))
         .containsExactlyElementsIn(GERRIT_CORE_PLUGINS)
         .inOrder();
+  }
+
+  private static String getenv(String name) {
+    String value = System.getenv(name);
+    assume().that(value).isNotNull();
+    return value;
   }
 
   private static Path random() throws IOException {
