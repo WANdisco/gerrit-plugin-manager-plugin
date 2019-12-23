@@ -42,14 +42,9 @@ public class ListAvailablePlugins implements RestReadView<TopLevelResource> {
 
   @Override
   public Response<Map<String, PluginInfo>> apply(TopLevelResource resource)
-      throws RestApiException {
+      throws RestApiException, ExecutionException {
     Map<String, PluginInfo> output = Maps.newTreeMap();
-    List<PluginInfo> plugins;
-    try {
-      plugins = new ArrayList<>(pluginsCache.availablePlugins());
-    } catch (ExecutionException e) {
-      throw new RestApiException("Unable to load the list of available plugins", e);
-    }
+    List<PluginInfo> plugins = new ArrayList<>(pluginsCache.availablePlugins());
     Collections.sort(
         plugins,
         new Comparator<PluginInfo>() {
