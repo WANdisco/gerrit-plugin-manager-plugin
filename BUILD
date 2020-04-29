@@ -1,4 +1,10 @@
-load("//tools/bzl:plugin.bzl", "gerrit_plugin")
+load("//tools/bzl:junit.bzl", "junit_tests")
+load(
+    "//tools/bzl:plugin.bzl",
+    "PLUGIN_DEPS",
+    "PLUGIN_TEST_DEPS",
+    "gerrit_plugin",
+)
 
 gerrit_plugin(
     name = "plugin-manager",
@@ -11,5 +17,15 @@ gerrit_plugin(
         "Gerrit-ReloadMode: restart",
         "Implementation-Title: Plugin manager",
         "Implementation-URL: https://gerrit-review.googlesource.com/#/admin/projects/plugins/plugin-manager",
+    ],
+)
+
+junit_tests(
+    name = "plugin_manager_tests",
+    srcs = glob(["src/test/java/**/*.java"]),
+    data = ["//:release.war"],
+    visibility = ["//visibility:public"],
+    deps = PLUGIN_TEST_DEPS + [
+        ":plugin-manager__plugin",
     ],
 )
