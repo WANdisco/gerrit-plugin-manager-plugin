@@ -17,6 +17,7 @@ package com.googlesource.gerrit.plugins.manager.repository;
 import com.google.common.base.Function;
 import com.google.common.base.Predicate;
 import com.google.common.collect.FluentIterable;
+import com.google.common.io.Files;
 import com.google.gerrit.common.Version;
 import com.google.gerrit.server.config.SitePaths;
 import com.google.inject.Inject;
@@ -82,7 +83,11 @@ public class CorePluginsRepository implements PluginsRepository {
                 pluginUrl.toString());
           }
           return new PluginInfo(
-              entryName.getFileName().toString(), "", "", "", pluginUrl.toString());
+              dropFileExtension(entryName.getFileName().toString()),
+              "",
+              "",
+              "",
+              pluginUrl.toString());
         } catch (IOException e) {
           log.error("Unable to open plugin " + pluginUrl, e);
           return null;
@@ -91,6 +96,11 @@ public class CorePluginsRepository implements PluginsRepository {
         log.error("Invalid plugin filename", e);
         return null;
       }
+    }
+
+    private String dropFileExtension(String fileName) {
+      String extension = Files.getFileExtension(fileName);
+      return fileName.substring(0, fileName.length() - extension.length() - 1);
     }
 
     private Manifest getManifestEntry(JarInputStream pluginJar) throws IOException {
