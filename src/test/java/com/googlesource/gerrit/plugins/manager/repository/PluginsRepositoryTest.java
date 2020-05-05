@@ -36,7 +36,6 @@ public class PluginsRepositoryTest {
           "commit-message-length-validator",
           "download-commands",
           "hooks",
-          "plugin-manager",
           "replication",
           "reviewnotes",
           "singleusergroup");
