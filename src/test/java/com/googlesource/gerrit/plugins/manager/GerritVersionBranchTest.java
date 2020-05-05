@@ -50,12 +50,13 @@ public class GerritVersionBranchTest {
 
   @Test
   public void getBranchReturnsCorrectBranchForDevelopmentOnStableBranches() throws Exception {
-    assertBranch("2.16.8-17-gc8b633d5ce", "stable-2.16");
+    assertBranch("2.16.8", "stable-2.16");
+    assertBranch("3.0.0-rc2", "stable-3.0");
   }
 
   @Test
   public void getBranchReturnsCorrectBranchForDevelopmentOnMaster() throws Exception {
-    assertBranch("3.0.0-rc2-237-gae0124c68e", "master");
+    assertBranch("3.0.0-237-gae0124c68e", "master");
   }
 
   @Test
