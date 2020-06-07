@@ -46,19 +46,38 @@ public class PluginsRepositoryTest {
 
   @Test
   public void corePluginsRepositoryShouldReturnCorePluginsFromReleaseWar() throws IOException {
-    SitePaths site = new SitePaths(random());
-    PluginsRepository pluginRepo = new CorePluginsRepository(site, new CorePluginsDescriptions());
+    SitePaths site = prepareSiteDirWithReleaseWar();
 
-    Path pathToReleaseWar =
-        Paths.get(getenv("TEST_SRCDIR"), getenv("TEST_WORKSPACE"), "release.war");
-    assume().that(pathToReleaseWar.toFile().exists()).isTrue();
-    Files.createDirectories(site.bin_dir);
-    Files.createSymbolicLink(site.gerrit_war, pathToReleaseWar);
+    PluginsRepository pluginRepo = new CorePluginsRepository(site, new CorePluginsDescriptions());
 
     Collection<PluginInfo> plugins = pluginRepo.list(Version.getVersion());
     assertThat(plugins.stream().map(p -> p.name).sorted().collect(toList()))
         .containsExactlyElementsIn(GERRIT_CORE_PLUGINS)
         .inOrder();
+  }
+
+  @Test
+  public void corePluginsListFromReleaseWarShouldNotBeEmptyOnWindows() throws IOException {
+    char windowsSeparator = '\\';
+    SitePaths site = prepareSiteDirWithReleaseWar();
+
+    PluginsRepository pluginRepo =
+        new CorePluginsRepository(
+            site.gerrit_war,
+            site.gerrit_war.toString().replace('/', windowsSeparator),
+            new CorePluginsDescriptions());
+
+    assertThat(pluginRepo.list(Version.getVersion())).isNotEmpty();
+  }
+
+  private SitePaths prepareSiteDirWithReleaseWar() throws IOException {
+    SitePaths site = new SitePaths(random());
+    Path pathToReleaseWar =
+        Paths.get(getenv("TEST_SRCDIR"), getenv("TEST_WORKSPACE"), "release.war");
+    assume().that(pathToReleaseWar.toFile().exists()).isTrue();
+    Files.createDirectories(site.bin_dir);
+    Files.createSymbolicLink(site.gerrit_war, pathToReleaseWar);
+    return site;
   }
 
   private static String getenv(String name) {
