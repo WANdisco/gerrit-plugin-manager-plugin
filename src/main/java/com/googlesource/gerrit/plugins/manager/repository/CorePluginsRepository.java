@@ -19,6 +19,7 @@ import static java.util.Comparator.comparing;
 import static java.util.Objects.requireNonNull;
 
 import com.google.common.collect.ImmutableList;
+import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.common.Nullable;
 import com.google.gerrit.common.Version;
 import com.google.gerrit.server.config.SitePaths;
@@ -35,11 +36,9 @@ import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.jar.JarInputStream;
 import java.util.jar.Manifest;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CorePluginsRepository implements PluginsRepository {
-  private static final Logger log = LoggerFactory.getLogger(CorePluginsRepository.class);
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
   private static final String GERRIT_VERSION = Version.getVersion();
 
   private final SitePaths site;
@@ -78,11 +77,11 @@ public class CorePluginsRepository implements PluginsRepository {
                     "",
                     pluginUrl.toString()));
       } catch (IOException e) {
-        log.error("Unable to open plugin " + pluginUrl, e);
+        logger.atSevere().withCause(e).log("Unable to open plugin %s", pluginUrl);
         return null;
       }
     } catch (URISyntaxException e) {
-      log.error("Invalid plugin filename", e);
+      logger.atSevere().withCause(e).log("Invalid plugin filename");
       return null;
     }
   }
@@ -108,15 +107,15 @@ public class CorePluginsRepository implements PluginsRepository {
   @Override
   public ImmutableList<PluginInfo> list(String gerritVersion) throws IOException {
     if (!gerritVersion.equals(GERRIT_VERSION)) {
-      log.warn(
-          "No core plugins available for version {} which is different than "
+      logger.atWarning().log(
+          "No core plugins available for version %s which is different than "
               + "the current running Gerrit",
           gerritVersion);
       return ImmutableList.of();
     }
 
     if (site.gerrit_war == null) {
-      log.warn("Core plugins not available on non-war Gerrit distributions");
+      logger.atWarning().log("Core plugins not available on non-war Gerrit distributions");
       return ImmutableList.of();
     }
 

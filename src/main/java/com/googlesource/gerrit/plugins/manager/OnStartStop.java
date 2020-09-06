@@ -14,17 +14,16 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
+import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.extensions.annotations.PluginName;
 import com.google.gerrit.extensions.events.LifecycleListener;
 import com.google.inject.Inject;
 import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class OnStartStop implements LifecycleListener {
-  private static final Logger log = LoggerFactory.getLogger(OnStartStop.class);
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
   private final PluginsCentralCache pluginsCache;
 
@@ -49,12 +48,12 @@ public class OnStartStop implements LifecycleListener {
 
                 @Override
                 public void run() {
-                  log.info("Start-up: pre-loading list of plugins from registry");
+                  logger.atInfo().log("Start-up: pre-loading list of plugins from registry");
                   try {
                     Collection<PluginInfo> plugins = pluginsCache.availablePlugins();
-                    log.info("{} plugins successfully pre-loaded", plugins.size());
+                    logger.atInfo().log("%d plugins successfully pre-loaded", plugins.size());
                   } catch (ExecutionException e) {
-                    log.error("Cannot access plugins list at this time", e);
+                    logger.atSevere().withCause(e).log("Cannot access plugins list at this time");
                   }
                 }
               });

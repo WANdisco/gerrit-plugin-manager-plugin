@@ -16,6 +16,7 @@ package com.googlesource.gerrit.plugins.manager;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.common.flogger.FluentLogger;
 import com.google.gerrit.extensions.registration.DynamicItem;
 import com.google.gerrit.httpd.WebSession;
 import com.google.gerrit.server.AccessPath;
@@ -32,12 +33,10 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpServletResponseWrapper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class XAuthFilter implements Filter {
-  private static final Logger log = LoggerFactory.getLogger(XAuthFilter.class);
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
   private DynamicItem<WebSession> webSession;
 
@@ -60,7 +59,7 @@ public class XAuthFilter implements Filter {
     if (gerritAuth != null) {
       session.setAccessPathOk(AccessPath.REST_API, true);
 
-      log.debug("Injecting X-Gerrit-Auth for {}", httpReq.getRequestURI());
+      logger.atFine().log("Injecting X-Gerrit-Auth for %s", httpReq.getRequestURI());
       httpResp =
           new HttpServletResponseWrapper(httpResp) {
 
@@ -68,7 +67,7 @@ public class XAuthFilter implements Filter {
 
             @Override
             public void setHeader(String name, String value) {
-              log.debug("{}: {}", name, value);
+              logger.atFine().log("%s: %s", name, value);
               if (name.equalsIgnoreCase("Content-Length")) {
                 origContentLength = Integer.parseInt(value);
               } else {

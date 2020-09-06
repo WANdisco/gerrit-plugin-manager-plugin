@@ -16,6 +16,7 @@ package com.googlesource.gerrit.plugins.manager.repository;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import com.google.common.flogger.FluentLogger;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.inject.Inject;
@@ -36,13 +37,11 @@ import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import org.apache.commons.lang.StringUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 @Singleton
 public class JenkinsCiPluginsRepository implements PluginsRepository {
 
-  private static final Logger log = LoggerFactory.getLogger(JenkinsCiPluginsRepository.class);
+  private static final FluentLogger logger = FluentLogger.forEnclosingClass();
 
   private final PluginManagerConfig config;
 
@@ -95,7 +94,8 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
         }
       }
     } catch (FileNotFoundException e) {
-      log.warn("No plugins available for Gerrit version " + gerritVersion, e);
+      logger.atWarning().withCause(e).log(
+          "No plugins available for Gerrit version %s", gerritVersion);
     }
 
     return plugins;
@@ -180,7 +180,7 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
           artifactBody.append(line);
         }
       } catch (Exception e) {
-        log.error("Unable to fetch artifact from " + versionUrl);
+        logger.atSevere().log("Unable to fetch artifact from %s", versionUrl);
         return Optional.empty();
       }
     }
@@ -203,7 +203,7 @@ public class JenkinsCiPluginsRepository implements PluginsRepository {
     try {
       return Optional.of(gsonProvider.get().get(url));
     } catch (IOException e) {
-      log.error("Cannot get JSON from " + url, e);
+      logger.atSevere().withCause(e).log("Cannot get JSON from %s", url);
       return Optional.empty();
     }
   }
