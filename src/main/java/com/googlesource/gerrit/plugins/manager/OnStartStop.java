@@ -53,7 +53,7 @@ public class OnStartStop implements LifecycleListener {
                     Collection<PluginInfo> plugins = pluginsCache.availablePlugins();
                     logger.atInfo().log("%d plugins successfully pre-loaded", plugins.size());
                   } catch (ExecutionException e) {
-                    logger.atSevere().withCause(e).log("Cannot access plugins list at this time");
+                    logger.atSevere().withCause(e).log("Failed to access plugin list");
                   }
                 }
               });

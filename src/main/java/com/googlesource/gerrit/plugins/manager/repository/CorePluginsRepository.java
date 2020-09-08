@@ -115,7 +115,7 @@ public class CorePluginsRepository implements PluginsRepository {
     }
 
     if (site.gerrit_war == null) {
-      logger.atWarning().log("Core plugins not available on non-war Gerrit distributions");
+      logger.atWarning().log("Core plugins not available in non-war Gerrit distributions");
       return ImmutableList.of();
     }
 
