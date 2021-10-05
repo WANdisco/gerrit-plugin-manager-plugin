@@ -1,5 +1,5 @@
 load("//tools/bzl:junit.bzl", "junit_tests")
-load("//tools/bzl:plugin.bzl", "PLUGIN_TEST_DEPS", "gerrit_plugin")
+load("//tools/bzl:plugin.bzl", "PLUGIN_DEPS", "PLUGIN_TEST_DEPS", "gerrit_plugin")
 
 gerrit_plugin(
     name = "plugin-manager",
@@ -13,6 +13,9 @@ gerrit_plugin(
         "Implementation-URL: https://gerrit-review.googlesource.com/#/admin/projects/plugins/plugin-manager",
     ],
     resources = glob(["src/main/resources/**/*"]),
+    deps = PLUGIN_DEPS + [
+        "@commons-lang3//jar",
+    ],
 )
 
 junit_tests(
