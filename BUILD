@@ -13,9 +13,6 @@ gerrit_plugin(
         "Implementation-URL: https://gerrit-review.googlesource.com/#/admin/projects/plugins/plugin-manager",
     ],
     resources = glob(["src/main/resources/**/*"]),
-    deps = PLUGIN_DEPS + [
-        "@commons-lang3//jar",
-    ],
 )
 
 junit_tests(
