@@ -32,7 +32,7 @@ import org.junit.Test;
 @NoHttpd
 @TestPlugin(
     name = "plugin-manager",
-    sysModule = "com.googlesource.gerrit.plugins.manager.Module",
+    sysModule = "com.googlesource.gerrit.plugins.manager.PluginModule",
     httpModule = "com.googlesource.gerrit.plugins.manager.WebModule")
 public class PluginManagerTopMenuIT extends LightweightPluginDaemonTest {
 

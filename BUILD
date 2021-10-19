@@ -7,7 +7,7 @@ gerrit_plugin(
     manifest_entries = [
         "Gerrit-PluginName: plugin-manager",
         "Gerrit-HttpModule: com.googlesource.gerrit.plugins.manager.WebModule",
-        "Gerrit-Module: com.googlesource.gerrit.plugins.manager.Module",
+        "Gerrit-Module: com.googlesource.gerrit.plugins.manager.PluginModule",
         "Gerrit-ReloadMode: restart",
         "Implementation-Title: Plugin manager",
         "Implementation-URL: https://gerrit-review.googlesource.com/#/admin/projects/plugins/plugin-manager",

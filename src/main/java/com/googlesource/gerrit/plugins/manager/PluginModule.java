@@ -23,7 +23,7 @@ import com.googlesource.gerrit.plugins.manager.repository.CorePluginsRepository;
 import com.googlesource.gerrit.plugins.manager.repository.JenkinsCiPluginsRepository;
 import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
 
-public class Module extends AbstractModule {
+public class PluginModule extends AbstractModule {
 
   @Override
   protected void configure() {
