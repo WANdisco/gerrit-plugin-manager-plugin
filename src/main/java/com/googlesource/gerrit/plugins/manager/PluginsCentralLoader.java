@@ -14,6 +14,7 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
+import com.google.common.base.Splitter;
 import com.google.common.cache.CacheLoader;
 import com.google.gerrit.common.Version;
 import com.google.gerrit.extensions.registration.DynamicSet;
@@ -24,10 +25,12 @@ import com.googlesource.gerrit.plugins.manager.repository.PluginInfo;
 import com.googlesource.gerrit.plugins.manager.repository.PluginsRepository;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Singleton
 public class PluginsCentralLoader extends CacheLoader<ListKey, Collection<PluginInfo>> {
+  private static final Splitter VERSION_SPLITTER = Splitter.on(".");
 
   public static class ListKey {
     static final ListKey ALL = new ListKey();
@@ -65,18 +68,18 @@ public class PluginsCentralLoader extends CacheLoader<ListKey, Collection<Plugin
   }
 
   private boolean isLaterVersion(String newVersion, String currVersion) {
-    String[] vals1 = newVersion.replaceAll("-", ".").split("\\.");
-    String[] vals2 = currVersion.replaceAll("-", ".").split("\\.");
+    List<String> vals1 = VERSION_SPLITTER.splitToList(newVersion.replaceAll("-", "."));
+    List<String> vals2 = VERSION_SPLITTER.splitToList(currVersion.replaceAll("-", "."));
     int i = 0;
 
-    while (i < vals1.length && i < vals2.length && vals1[i].equals(vals2[i])) {
+    while (i < vals1.size() && i < vals2.size() && vals1.get(i).equals(vals2.get(i))) {
       i++;
     }
 
-    if (i < vals1.length && i < vals2.length) {
-      return compareNumOrStrings(vals1[i], vals2[i]) > 0;
+    if (i < vals1.size() && i < vals2.size()) {
+      return compareNumOrStrings(vals1.get(i), vals2.get(i)) > 0;
     }
-    return vals1.length - vals2.length > 0;
+    return vals1.size() - vals2.size() > 0;
   }
 
   private int compareNumOrStrings(String v1, String v2) {

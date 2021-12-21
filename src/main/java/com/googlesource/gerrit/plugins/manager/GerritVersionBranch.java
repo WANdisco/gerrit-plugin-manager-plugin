@@ -14,7 +14,12 @@
 
 package com.googlesource.gerrit.plugins.manager;
 
+import com.google.common.base.Splitter;
+import java.util.List;
+
 public class GerritVersionBranch {
+  private static final Splitter VERSION_SPLITTER = Splitter.on(".");
+  private static final Splitter MINOR_VERSION_SPLITTER = Splitter.on("-");
 
   public static String getBranch(String gerritVersion) {
     if (gerritVersion == null
@@ -22,16 +27,16 @@ public class GerritVersionBranch {
         || !Character.isDigit(gerritVersion.trim().charAt(0))) {
       return "master";
     }
-    String[] versionNumbers = gerritVersion.split("\\.");
-    String major = versionNumbers[0];
-    String minor = versionNumbers[1];
+    List<String> versionNumbers = VERSION_SPLITTER.splitToList(gerritVersion);
+    String major = versionNumbers.get(0);
+    String minor = versionNumbers.get(1);
 
     if (minor.contains("-")) {
-      minor = minor.split("-")[0];
+      minor = MINOR_VERSION_SPLITTER.splitToList(minor).get(0);
     }
 
-    if (versionNumbers.length > 2) {
-      String fixVersionNumber = versionNumbers[2];
+    if (versionNumbers.size() > 2) {
+      String fixVersionNumber = versionNumbers.get(2);
       if (fixVersionNumber.contains("-") && !fixVersionNumber.contains("-rc")) {
         return "master";
       }
