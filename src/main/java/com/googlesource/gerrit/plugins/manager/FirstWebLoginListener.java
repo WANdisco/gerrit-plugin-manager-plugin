@@ -25,7 +25,9 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
-import java.util.Date;
+import java.time.Instant;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -55,8 +57,11 @@ public class FirstWebLoginListener implements WebLoginListener {
       if (!firstLoginFile.toFile().exists()) {
         response.sendRedirect(pluginUrlPath + "static/intro.html");
 
-        Files.write(
-            firstLoginFile, new Date().toString().getBytes(UTF_8), StandardOpenOption.CREATE);
+        String timestamp =
+            DateTimeFormatter.ofPattern("EEE MMM dd HH:mm:ss zzz yyyy")
+                .withZone(ZoneId.systemDefault())
+                .format(Instant.now());
+        Files.write(firstLoginFile, timestamp.getBytes(UTF_8), StandardOpenOption.CREATE);
       }
     }
   }
