@@ -61,16 +61,18 @@
               <h4>
                 <span id="installing-{{prop.id}}"
                   class="label label-default hidden">Installing</span>
+                <span id="managed-{{prop.id}}"
+                      class="label label-replicated {{ prop.replicated ? '' : 'hidden' }}">Replicated Plugin</span>
                 <span
                   id="installed-{{prop.id}}"
-                  class="label label-success {{ (prop.version != '' && prop.update_version == '') ? '':'hidden' }}">Up to date</span>
+                  class="label label-success {{ (!prop.replicated && prop.version != '' && prop.update_version == '') ? '':'hidden' }}">Up to date</span>
                 <span
                   id="failed-{{prop.id}}" class="label label-warning hidden">Failed</span>
                 <button id="{{prop.id}}" type="button"
-                  class="btn btn-sm btn-primary {{ (prop.version == '' && prop.update_version != undefined) ? '':'hidden' }}"
+                  class="btn btn-sm btn-primary {{ (!prop.replicated && prop.version == '' && prop.update_version != undefined) ? '':'hidden' }}"
                   ng-click="install(prop.id,prop.url)">Install</button>
                 <button id="{{prop.id}}" type="button"
-                  class="btn btn-sm btn-primary {{ (prop.version != '' && prop.update_version != '') ? '':'hidden' }}"
+                  class="btn btn-sm btn-primary {{ (!prop.replicated && prop.version != '' && prop.update_version != '') ? '':'hidden' }}"
                   ng-click="install(prop.id,prop.url)">Upgrade</button>
               </h4>
             </td>

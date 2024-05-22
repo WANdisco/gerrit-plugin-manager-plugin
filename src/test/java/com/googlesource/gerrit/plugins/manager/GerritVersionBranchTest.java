@@ -68,6 +68,11 @@ public class GerritVersionBranchTest {
     assertBranch("foo", "master");
   }
 
+  @Test
+  public void getBranchReturnsCorrectBranchForGerritMS() throws Exception {
+    assertBranch("2.16.27-RP-1.10.1.1", "stable-2.16");
+  }
+
   private static void assertBranch(String version, String expectedBranch) throws Exception {
     assertThat(getBranch(version)).isEqualTo(expectedBranch);
   }

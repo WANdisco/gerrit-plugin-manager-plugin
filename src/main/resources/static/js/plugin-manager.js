@@ -12,6 +12,8 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 
+const replicated_plugins = ["delete-project", "lfs", "its-jira", "its-base", "plugin-manager"];
+
 var app = angular.module('PluginManager', []).controller(
     'LoadInstalledPlugins',
     function($scope, $http, $location, $window) {
@@ -110,6 +112,7 @@ var app = angular.module('PluginManager', []).controller(
                       currPlugin.sha1 = plugin.sha1;
                       currPlugin.url = plugin.url;
                       currPlugin.description = plugin.description;
+                      currPlugin.replicated = replicated_plugins.includes(plugin.id);
 
                       if (currRow < 0) {
                         plugins.list.push(currPlugin);

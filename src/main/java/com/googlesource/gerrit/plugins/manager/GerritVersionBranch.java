@@ -37,7 +37,7 @@ public class GerritVersionBranch {
 
     if (versionNumbers.size() > 2) {
       String fixVersionNumber = versionNumbers.get(2);
-      if (fixVersionNumber.contains("-") && !fixVersionNumber.contains("-rc")) {
+      if (fixVersionNumber.contains("-") && !fixVersionNumber.contains("-rc") && !fixVersionNumber.contains("-RP-")) {
         return "master";
       }
     }

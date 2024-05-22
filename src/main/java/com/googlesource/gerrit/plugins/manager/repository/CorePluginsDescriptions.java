@@ -43,6 +43,14 @@ public class CorePluginsDescriptions {
         "singleusergroup", "GroupBackend enabling users to be directly added to access rules");
     pluginsDescriptions.put(
         "webhooks", "Allows to propagate Gerrit events to remote http endpoints");
+
+    // Additional Replicated Core Plugins
+    pluginsDescriptions.put("lfs",
+            "Enables Git Large File Storage integration for Gerrit projects.");
+    pluginsDescriptions.put("its-base",
+            "Base functionality for interaction with Issue Tracking Systems");
+    pluginsDescriptions.put("its-jira",
+            "Enables links to Jira ITS in comments and publishing Gerrit events as ticket comments.");
   }
 
   public Optional<String> get(String plugin) {

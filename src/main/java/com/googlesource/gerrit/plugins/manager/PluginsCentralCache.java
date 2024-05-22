@@ -16,6 +16,7 @@ package com.googlesource.gerrit.plugins.manager;
 
 import com.google.common.cache.LoadingCache;
 import com.google.gerrit.server.cache.CacheModule;
+import com.google.gerrit.server.cache.SkipCacheReplication;
 import com.google.inject.Inject;
 import com.google.inject.TypeLiteral;
 import com.google.inject.name.Named;
@@ -29,6 +30,7 @@ public class PluginsCentralCache {
 
   private final LoadingCache<ListKey, Collection<PluginInfo>> pluginsCache;
 
+  @SkipCacheReplication
   public static final String PLUGINS_LIST_CACHE_NAME = "plugins_list";
 
   @Inject
